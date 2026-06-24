@@ -8,8 +8,8 @@
 // Input your credentials below. If left empty, the comments system will 
 // automatically fall back to local storage (safe for offline testing).
 const SUPABASE_CONFIG = {
-    url: "",      // Paste your Supabase Project URL here (e.g. https://xxxx.supabase.co)
-    anonKey: ""  // Paste your Supabase Public Anon Key here
+    url: "https://isxjekzmqquxipahaack.supabase.co",      // Paste your Supabase Project URL here (e.g. https://xxxx.supabase.co)
+    anonKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlzeGpla3ptcXF1eGlwYWhhYWNrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIzMDgzMTUsImV4cCI6MjA5Nzg4NDMxNX0.lJNmujk6NfEQG-tloi39Qj_w5saVTw1jwBdgANU44mQ"  // Paste your Supabase Public Anon Key here
 };
 
 /* 
