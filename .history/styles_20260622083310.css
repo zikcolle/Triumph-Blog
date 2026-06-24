@@ -1,0 +1,116 @@
+/*html {
+  min-height: 100%;
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}*/
+
+body {
+    background-color: rgb(241, 241, 241);
+    color: rgb(0, 0, 0);
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    padding: 0 50px 0 50px;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0 auto;
+    max-width: 1200px;
+    padding: 0 200px 0 200px;
+    background-color: rgba(255,255,255,0.92);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.108);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    box-shadow: 0 1px 0 rgba(0,0,0,0.04), 0 2px 16px rgba(0,0,0,0.04);
+    color: rgb(0, 101, 0);
+}
+
+nav a {
+    text-decoration: none;
+    color: rgb(0, 0, 0);
+}
+
+nav a:hover {
+    text-decoration: none;
+    color: rgb(0, 101, 0);
+    text-decoration: underline;
+}
+
+main {
+    padding: 50px;
+}
+
+img, svg, video, canvas, iframe {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+.label-post {
+    background-color: rgb(0, 101, 0);
+    color: rgb(255, 255, 255);
+    max-width: fit-content;
+    padding: 10px;
+    border-radius: 15px;
+    font-size: 1rem;
+}
+
+.feat-post {
+    background-color: rgb(255, 255, 255);
+    border: 1px solid rgba(0, 0, 0, 0.129);
+    max-width: 100%;
+    height: auto;
+    align-items: center;
+    display: block;
+    border-radius: 10px;
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    box-shadow: 0 1px 0 rgba(0,0,0,0.04), 0 2px 16px rgba(0,0,0,0.04);
+    padding: 20px;
+    image-rendering: auto;
+    justify-content: center;
+}
+
+.read-more {
+    background-color: rgb(0, 101, 0);
+    color: rgb(255, 255, 255);
+    text-decoration: none;
+    max-width: fit-content;
+    padding: 5px;
+    border-radius: 5px;
+}
+
+.post-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(600px, 1fr));
+}
+
+.blog-post {
+    background-color: rgb(255, 255, 255);
+    border: 1px solid rgba(0, 0, 0, 0.129);
+    border-radius: 10px;
+    padding: 20px;
+    margin: 5px;
+    line-height: 2;
+}
+
+.view-more {
+    background-color: rgb(0, 101, 0);
+    color: rgb(255, 255, 255);
+    text-decoration: none;
+    padding: 20px;
+    margin: 10px;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+.rel-post {
+   display: flex;
+   align-items: center;
+   gap: 20px;
+}
+
+.rel-post img {
+    width
+}

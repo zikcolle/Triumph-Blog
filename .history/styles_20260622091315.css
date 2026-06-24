@@ -1,0 +1,143 @@
+body {
+    background-color: rgb(241, 241, 241);
+    color: rgb(0, 0, 0);
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    padding: 0;
+    margin: 0;
+
+}
+
+header {
+    background-color: rgba(255,255,255,0.92);
+    padding: 10px 20px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.108);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    box-shadow: 0 1px 0 rgba(0,0,0,0.04), 0 2px 16px rgba(0,0,0,0.04);
+    color: rgb(0, 101, 0);
+    width: 100%;
+    box-sizing: border-box;
+}
+
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+    margin: 0;
+    padding: 0;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: rgb(0, 0, 0);
+}
+
+nav a:hover {
+    color: rgb(0, 101, 0);
+    text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+    nav ul {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 60px;
+        right: 0;
+        background: rgb(255, 255, 255);
+        width: 100%;
+        
+    }
+}
+
+main {
+    padding: 50px;
+}
+
+img, svg, video, canvas, iframe {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+.label-post {
+    background-color: rgb(0, 101, 0);
+    color: rgb(255, 255, 255);
+    max-width: fit-content;
+    padding: 10px;
+    border-radius: 15px;
+    font-size: 1rem;
+}
+
+.feat-post {
+    background-color: rgb(255, 255, 255);
+    border: 1px solid rgba(0, 0, 0, 0.129);
+    max-width: 100%;
+    height: auto;
+    align-items: center;
+    display: block;
+    border-radius: 10px;
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    box-shadow: 0 1px 0 rgba(0,0,0,0.04), 0 2px 16px rgba(0,0,0,0.04);
+    padding: 20px;
+    image-rendering: auto;
+    justify-content: center;
+}
+
+.read-more {
+    background-color: rgb(0, 101, 0);
+    color: rgb(255, 255, 255);
+    text-decoration: none;
+    max-width: fit-content;
+    padding: 5px;
+    border-radius: 5px;
+}
+
+.post-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(600px, 1fr));
+}
+
+.blog-post {
+    background-color: rgb(255, 255, 255);
+    border: 1px solid rgba(0, 0, 0, 0.129);
+    border-radius: 10px;
+    padding: 20px;
+    margin: 5px;
+    line-height: 2;
+}
+
+.view-more {
+    background-color: rgb(0, 101, 0);
+    color: rgb(255, 255, 255);
+    text-decoration: none;
+    padding: 20px;
+    margin: 10px;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+.rel-post {
+   display: flex;
+   align-items: center;
+   gap: 20px;
+}
+
+/*.rel-post img {
+    max-width: 300px;
+    height: auto;
+    aspect-ratio: 16 / 9;
+}*/
+
+.rel-post img {
+    width: 100px;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+}

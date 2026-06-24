@@ -1,0 +1,11 @@
+header {
+    display: flex;
+    justify-content: space-between;
+    background-color: ;
+    border-bottom: 1px solid black;
+}
+
+header a {
+    text-decoration: none;
+    
+}

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terms of Service | Tryumph Magazine</title>
+    <meta name="description" content="Review Tryumph Magazine's terms of service and website usage rules.">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <header>
+        <nav>
+            <a href="index.html" class="logo">Tryumph Magazine</a>
+            <button class="menu-toggle" aria-label="Toggle menu" onclick="toggleMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul id="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li class="dropdown">
+                    <a href="blog.html" onclick="toggleMobileDropdown(event)">Categories</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="blog.html?cat=investing" onclick="closeMenu()">Investing</a></li>
+                        <li><a href="blog.html?cat=markets" onclick="closeMenu()">Markets</a></li>
+                        <li><a href="blog.html?cat=crypto" onclick="closeMenu()">Cryptocurrency</a></li>
+                        <li><a href="blog.html?cat=personal-finance" onclick="closeMenu()">Personal Finance</a></li>
+                    </ul>
+                </li>
+                <li><a href="blog.html">Blog</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li><button id="theme-toggle-btn" class="theme-toggle-btn" aria-label="Toggle Theme">🌙</button></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <article class="post-container" style="padding-top: 40px;">
+            <h1 style="font-size: 2.8rem; margin-bottom: 20px; color: var(--color-primary);">Terms of Service</h1>
+            <p style="color: var(--color-text-muted);">Last updated: June 24, 2026</p>
+            
+            <section class="post-content" style="margin-top: 30px;">
+                <p>Welcome to Tryumph Magazine. By accessing our website, you agree to comply with and be bound by the following Terms of Service.</p>
+                
+                <h2>1. Intellectual Property</h2>
+                <p>All content published on Tryumph Magazine, including text, logos, analyses, and layout structures, is the intellectual property of Tryumph and protected by copyright laws.</p>
+                
+                <h2>2. User Discretion</h2>
+                <p>The information provided on this platform is for general educational and informational purposes only. Tryumph Magazine does not provide certified financial advice.</p>
+            </section>
+        </article>
+    </main>
+
+    <!-- Floating Back to Top Button -->
+    <button id="back-to-top-btn" class="back-to-top-btn" aria-label="Back to Top">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
+    </button>
+
+    <footer>
+        <div class="footer-container">
+            <p class="copyright">&copy; 2026 Tryumph Magazine. All rights reserved.</p>
+            <div class="footer-links">
+                <a href="privacy.html">Privacy Policy</a>
+                <a href="terms.html">Terms of Service</a>
+                <a href="disclaimer.html">Disclaimer</a>
+                <a href="submit-press.html">Submit Press</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

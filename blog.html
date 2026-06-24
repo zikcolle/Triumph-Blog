@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Latest Insights | Tryumph Magazine Blog</title>
+    <meta name="description" content="Browse the full archive of articles, guides, and analysis on trading, tech, entertainment, and financial independence.">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <header>
+        <nav>
+            <a href="index.html" class="logo">Tryumph Magazine</a>
+            <button class="menu-toggle" aria-label="Toggle menu" onclick="toggleMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul id="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li class="dropdown">
+                    <a href="blog.html" onclick="toggleMobileDropdown(event)">Categories</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="blog.html?cat=investing" onclick="closeMenu()">Investing</a></li>
+                        <li><a href="blog.html?cat=markets" onclick="closeMenu()">Markets</a></li>
+                        <li><a href="blog.html?cat=crypto" onclick="closeMenu()">Cryptocurrency</a></li>
+                        <li><a href="blog.html?cat=personal-finance" onclick="closeMenu()">Personal Finance</a></li>
+                    </ul>
+                </li>
+                <li><a href="blog.html">Blog</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li><button id="theme-toggle-btn" class="theme-toggle-btn" aria-label="Toggle Theme">🌙</button></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <h1 class="visually-hidden">Latest Financial Articles & Insights</h1>
+
+        <!-- Search Bar at the top of the blog page -->
+        <div class="search-container">
+            <input type="text" id="blog-search-input" class="search-input" placeholder="Search archive articles, categories, or keywords...">
+        </div>
+
+        <section>
+            <div>
+                <h2 class="label-post" id="post-label">Latest Briefings</h2>
+            </div>
+
+            <!-- Dynamic Placeholder -->
+            <div class="post-grid">
+                <div style="text-align: center; grid-column: 1/-1; color: var(--color-text-muted);">Loading briefings list...</div>
+            </div>
+        </section>
+
+        <!-- Newsletter section on blog archive page -->
+        <section style="background-color: var(--color-accent-light); padding: 40px; border-radius: var(--border-radius); text-align: center; max-width: 700px; margin: 40px auto 60px auto;">
+            <h2 style="font-size: 2rem; margin-bottom: 10px; color: var(--color-secondary);">Subscribe to Tryumph</h2>
+            <p style="color: var(--color-text-muted); max-width: 500px; margin: 0 auto 20px auto;">Get premium market analysis and strategic wealth recommendations delivered straight to your inbox weekly.</p>
+            <form class="newsletter-form" style="max-width: 400px; margin: 0 auto;" onsubmit="event.preventDefault(); alert('Thank you for subscribing!');">
+                <input type="email" placeholder="Your Email Address" required>
+                <button type="submit">Join Newsletter</button>
+            </form>
+        </section>
+
+        <!-- Related Posts Footer Section -->
+        <section class="related-posts-section">
+            <h2 class="label-post">Related Posts</h2>
+            <div class="related-posts-grid">
+                <div class="rel-post-card">
+                    <img src="simage/postiman.jpeg" alt="Recent post preview">
+                    <div class="rel-post-card-content">
+                        <span>Personal Finance</span>
+                        <h4><a href="post.html?id=1">How to make money online as a beginner</a></h4>
+                    </div>
+                </div>
+                <div class="rel-post-card">
+                    <img src="simage/postiman.jpeg" alt="Recent post preview">
+                    <div class="rel-post-card-content">
+                        <span>Markets</span>
+                        <h4><a href="post.html?id=2">First Post on Tryumph Mag</a></h4>
+                    </div>
+                </div>
+                <div class="rel-post-card">
+                    <img src="simage/postiman.jpeg" alt="Recent post preview">
+                    <div class="rel-post-card-content">
+                        <span>Investing</span>
+                        <h4><a href="post.html?id=3">Second Post on Tryumph Mag</a></h4>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Floating Back to Top Button -->
+    <button id="back-to-top-btn" class="back-to-top-btn" aria-label="Back to Top">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
+    </button>
+
+    <footer>
+        <div class="footer-container">
+            <p class="copyright">&copy; 2026 Tryumph Magazine. All rights reserved.</p>
+            <div class="footer-links">
+                <a href="privacy.html">Privacy Policy</a>
+                <a href="terms.html">Terms of Service</a>
+                <a href="disclaimer.html">Disclaimer</a>
+                <a href="submit-press.html">Submit Press</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Article Title | Tryumph Magazine</title>
+    <meta name="description" content="Tryumph Magazine provides leading market insights, investment tips, and finance strategies.">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <header>
+        <nav>
+            <a href="index.html" class="logo">Tryumph Magazine</a>
+            <button class="menu-toggle" aria-label="Toggle menu" onclick="toggleMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul id="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li class="dropdown">
+                    <a href="blog.html" onclick="toggleMobileDropdown(event)">Categories</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="blog.html?cat=investing" onclick="closeMenu()">Investing</a></li>
+                        <li><a href="blog.html?cat=markets" onclick="closeMenu()">Markets</a></li>
+                        <li><a href="blog.html?cat=crypto" onclick="closeMenu()">Cryptocurrency</a></li>
+                        <li><a href="blog.html?cat=personal-finance" onclick="closeMenu()">Personal Finance</a></li>
+                    </ul>
+                </li>
+                <li><a href="blog.html">Blog</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li><button id="theme-toggle-btn" class="theme-toggle-btn" aria-label="Toggle Theme">🌙</button></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <article class="post-container">
+            <header class="post-header">
+                <!-- Semantic Breadcrumbs -->
+                <nav class="breadcrumbs-nav" aria-label="Breadcrumb">
+                    <ol class="breadcrumbs">
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="blog.html">Category</a></li>
+                        <li>Loading title...</li>
+                    </ol>
+                </nav>
+
+                <h1>Loading Article Title...</h1>
+
+                <div class="post-meta">
+                    <span class="meta-author">By Loading...</span>
+                    <span class="meta-divider">&bull;</span>
+                    <span class="meta-date">Date</span>
+                    <span class="meta-divider">&bull;</span>
+                    <span class="meta-time">Read time</span>
+                </div>
+
+                <div class="post-tags-container" style="justify-content: center; margin-top: 12px;">
+                    <!-- Dynamic tag pills go here -->
+                </div>
+
+                <img src="simage/postiman.jpeg" class="post-hero-image" alt="Article image illustration">
+            </header>
+
+            <div class="post-body-split">
+                <!-- Left Content Column -->
+                <section class="post-content">
+                    <p>Loading article content...</p>
+                </section>
+
+                <!-- Right Sidebar Column -->
+                <aside class="post-sidebar">
+                    <!-- Dynamic Author Bio Widget -->
+                    <div class="sidebar-widget" id="author-bio-widget">
+                        <h3>Author Profile</h3>
+                        <p style="color: var(--color-text-muted); font-size: 0.9rem;">Loading author details...</p>
+                    </div>
+
+                    <div class="sidebar-widget">
+                        <h3>Related Posts</h3>
+                        <div class="sidebar-rel-posts">
+                            <div class="sidebar-rel-post-item">
+                                <img src="simage/postiman.jpeg" alt="Related post thumbnail">
+                                <a href="post.html?id=1">How to make money online as a beginner</a>
+                            </div>
+                            <div class="sidebar-rel-post-item">
+                                <img src="simage/postiman.jpeg" alt="Related post thumbnail">
+                                <a href="post.html?id=2">First Post on Tryumph Mag</a>
+                            </div>
+                            <div class="sidebar-rel-post-item">
+                                <img src="simage/postiman.jpeg" alt="Related post thumbnail">
+                                <a href="post.html?id=3">Second Post on Tryumph Mag</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="sidebar-widget">
+                        <h3>Subscribe to Tryumph</h3>
+                        <p>Get premium market analysis, hot strategies, and trade advice delivered weekly.</p>
+                        <form class="newsletter-form" onsubmit="event.preventDefault(); alert('Welcome to the elite circle!');">
+                            <input type="email" placeholder="Your Email Address" required>
+                            <button type="submit">Join Newsletter</button>
+                        </form>
+                    </div>
+                </aside>
+            </div>
+
+            <!-- Dynamic Comments System -->
+            <section class="comments-section">
+                <h2 id="comments-count" style="font-size: 1.8rem; margin-bottom: 20px; color: var(--color-secondary);">0 Comments</h2>
+                <div id="comments-list">
+                    <!-- Dynamic comment list goes here -->
+                </div>
+                
+                <div style="margin-top: 40px; background-color: var(--color-bg-card); border: 1px solid var(--color-border); padding: 30px; border-radius: var(--border-radius);">
+                    <h3 style="font-size: 1.4rem; margin-bottom: 15px; color: var(--color-primary); font-family: var(--font-heading);">Join the Discussion</h3>
+                    <form id="comment-form">
+                        <input type="text" id="comment-name" class="comment-input" required placeholder="Your Name">
+                        <textarea id="comment-body" class="comment-textarea" rows="4" required placeholder="Write a comment..."></textarea>
+                        <button type="submit" class="comment-submit-btn">Post Comment</button>
+                    </form>
+                </div>
+            </section>
+        </article>
+
+        <!-- Related Posts Footer Section -->
+        <section class="related-posts-section">
+            <h2 class="label-post">You May Also Like</h2>
+            <div class="related-posts-grid">
+                <div class="rel-post-card">
+                    <img src="simage/postiman.jpeg" alt="Recent post preview">
+                    <div class="rel-post-card-content">
+                        <span>Markets</span>
+                        <h4><a href="post.html?id=2">First Post on Tryumph Mag</a></h4>
+                    </div>
+                </div>
+                <div class="rel-post-card">
+                    <img src="simage/postiman.jpeg" alt="Recent post preview">
+                    <div class="rel-post-card-content">
+                        <span>Investing</span>
+                        <h4><a href="post.html?id=3">Second Post on Tryumph Mag</a></h4>
+                    </div>
+                </div>
+                <div class="rel-post-card">
+                    <img src="simage/postiman.jpeg" alt="Recent post preview">
+                    <div class="rel-post-card-content">
+                        <span>Cryptocurrency</span>
+                        <h4><a href="post.html?id=4">Third Post on Tryumph Mag</a></h4>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Floating Back to Top Button -->
+    <button id="back-to-top-btn" class="back-to-top-btn" aria-label="Back to Top">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
+    </button>
+
+    <footer>
+        <div class="footer-container">
+            <p class="copyright">&copy; 2026 Tryumph Magazine. All rights reserved.</p>
+            <div class="footer-links">
+                <a href="privacy.html">Privacy Policy</a>
+                <a href="terms.html">Terms of Service</a>
+                <a href="disclaimer.html">Disclaimer</a>
+                <a href="submit-press.html">Submit Press</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

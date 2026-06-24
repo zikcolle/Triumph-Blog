@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Triumph Magazine</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <header>
+        <nav>
+            <div class="logo">Triumph Magazine</div>
+            <div class="hamburger" onclick="toggleMenu()">
+                <svg width="30" height="30">
+                    <line x1="3" y1="5" x2="27" y2="5" stroke="black" stroke-width="3" />
+                    <line x1="3" y1="15" x2="27" y2="15" stroke="black" stroke-width="3" />
+                    <line x1="3" y1="25" x2="27" y2="25" stroke="black" stroke-width="3" />
+                </svg>
+
+
+            </div>
+            <ul id="nav-links">
+                <li><a href="#">Home</a></li>
+                <li><a href="/about-us">About</a></li>
+                <li><a href="/contact-us">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+
+    <main>
+        <article class="post-container">
+
+            <header class="post-header">
+                <h1>How to make money online as a beginner: The Complete 2026 Guide</h1>
+
+                    <div class="post-meta">
+                       <span class="meta-author">By Zikcolle</span>
+                       <span class="meta-divider">&bull;</span>
+                       <span class="meta-date">June 22, 2026</span>
+                       <span class="meta-divider">&bull;</span>
+                       <span class="meta-time">5 min read</span>
+                    </div>
+
+                    <img src="simage\postiman.jpeg">
+            </header>
+
+            <div class="post-body-split">
+
+                <section class="post-content">
+                    <p></p>
+                </section>
+            </div>
+        </article>
+    </main>
+
+    <footer>
+        <div class="footer-container">
+            <p class="copyright">&copy; 2026 Triumph Magazine. All rights reserved.</p>
+            <div class="footer-links">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+                <a href="#top">Back to Top &uarr;</a>
+            </div>
+        </div>
+    </footer>
+
+</body>
+
+</html>
+
+<script>
+    function toggleMenu() {
+        document.getElementById('nav-links').classList.toggle('active');
+    }
+</script>

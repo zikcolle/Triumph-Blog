@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CMS Dashboard | Triumph Magazine</title>
+    <meta name="description" content="Triumph Magazine editorial publishing platform. Write and release new finance articles.">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <header>
+        <nav>
+            <div class="logo">Triumph Magazine</div>
+            <button class="menu-toggle" aria-label="Toggle menu" onclick="toggleMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul id="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="blog.html">Blog</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li><a href="cms.html" style="color: var(--color-accent); font-weight: 700;">CMS Panel</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <div class="editorial-hero">
+            <h1>Editorial Desk</h1>
+            <p>Publish a new article to Triumph Magazine. The dynamic framework calculates read times and routes tags instantly.</p>
+        </div>
+
+        <div class="cms-container">
+            <form id="cms-publish-form">
+                <div class="cms-form-group">
+                    <label for="cms-title">Article Title</label>
+                    <input type="text" id="cms-title" class="cms-input" required placeholder="e.g. How to Analyze Stocks in 2026">
+                </div>
+
+                <div class="cms-form-group">
+                    <label for="cms-category">Category</label>
+                    <select id="cms-category" class="cms-select" required>
+                        <option value="investing">Investing</option>
+                        <option value="markets">Markets</option>
+                        <option value="crypto">Cryptocurrency</option>
+                        <option value="personal-finance">Personal Finance</option>
+                    </select>
+                </div>
+
+                <div class="cms-form-group">
+                    <label for="cms-tags">Tags (comma separated)</label>
+                    <input type="text" id="cms-tags" class="cms-input" required placeholder="e.g. Stocks, Wealth, Analysis">
+                </div>
+
+                <div class="cms-form-group">
+                    <label for="cms-author">Author Name</label>
+                    <input type="text" id="cms-author" class="cms-input" required placeholder="e.g. Zikcolle">
+                </div>
+
+                <div class="cms-form-group">
+                    <label for="cms-author-bio">Author Bio Description</label>
+                    <input type="text" id="cms-author-bio" class="cms-input" required placeholder="e.g. Portfolio Manager and lead contributor.">
+                </div>
+
+                <div class="cms-form-group">
+                    <label for="cms-summary">Short Card Summary</label>
+                    <textarea id="cms-summary" class="cms-textarea" rows="3" required placeholder="Provide a brief summary for post listings cards..."></textarea>
+                </div>
+
+                <div class="cms-form-group">
+                    <label for="cms-body">Article Content Body (supports HTML tags)</label>
+                    <textarea id="cms-body" class="cms-textarea" rows="10" required placeholder="<p>Write your detailed article body here...</p>"></textarea>
+                </div>
+
+                <button type="submit" class="comment-submit-btn" style="width: 100%; font-size: 1.05rem;">Publish Article</button>
+            </form>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-container">
+            <p class="copyright">&copy; 2026 Triumph Magazine. All rights reserved.</p>
+            <div class="footer-links">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+                <a href="#top">Back to Top &uarr;</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

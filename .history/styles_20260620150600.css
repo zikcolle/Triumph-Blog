@@ -1,0 +1,15 @@
+header {
+    display: flex;
+    justify-content: space-between;
+    background-color: rgba(255,255,255,0.92);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.213);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    box-shadow: 0 1px 0 rgba(0,0,0,0.04), 0 2px 16px rgba(0,0,0,0.04);
+    width: 750;
+}
+
+header a {
+    text-decoration: none;
+    
+}

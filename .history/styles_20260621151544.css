@@ -1,0 +1,66 @@
+html {
+  min-height: 100%;
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+    background-color: rgb(241, 241, 241);
+    color: rgb(0, 0, 0);
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0 auto;
+    width: 100%;
+    max-width: 1200px;
+    padding: 0 200px 0 200px;
+    background-color: rgba(255,255,255,0.92);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.108);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    box-shadow: 0 1px 0 rgba(0,0,0,0.04), 0 2px 16px rgba(0,0,0,0.04);
+    color: rgb(0, 101, 0);
+}
+
+nav {
+    gap: 1;
+}
+
+nav a {
+    text-decoration: none;
+    color: rgb(0, 0, 0);
+}
+
+nav a:hover {
+    text-decoration: none;
+    color: rgb(0, 101, 0);
+    text-decoration: underline;
+}
+
+main {
+    padding: 50px;
+}
+
+.feat-post {
+    background-color: rgb(255, 255, 255);
+    border: 1px solid rgba(0, 0, 0, 0.311);
+    max-width: 100%;
+    height: auto;
+    align-items: center;
+    display: block;
+    border-radius: 20px;
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    box-shadow: 0 1px 0 rgba(0,0,0,0.04), 0 2px 16px rgba(0,0,0,0.04);
+    margin: 20px;
+}
+
+img, svg, video, canvas, iframe {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
