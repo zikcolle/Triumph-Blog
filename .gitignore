@@ -1,0 +1,5 @@
+node_modules/
+supabase.tar.gz
+supabase.exe
+.history/
+.env*
