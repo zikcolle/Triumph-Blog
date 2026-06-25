@@ -576,6 +576,12 @@ async function loadPostPage() {
 }
 
 async function loadCommentsSection(postId) {
+    // Debug: ensure we have a valid postId
+    console.log('🔧 loadCommentsSection called with postId:', postId);
+    if (!postId) {
+        console.warn('⚠️ postId is undefined – aborting comment loading');
+        return;
+    }
     const commentsList = document.getElementById('comments-list');
     const commentsCount = document.getElementById('comments-count');
     const commentForm = document.getElementById('comment-form');
@@ -639,6 +645,7 @@ async function loadCommentsSection(postId) {
 
     const renderComments = async () => {
         const comments = await COMMENTS_API.getComments(postId);
+        console.log('🔧 Fetched comments:', comments);
         commentsCount.textContent = `${comments.length} comment${comments.length !== 1 ? 's' : ''}`;
         
         commentsList.innerHTML = '';

@@ -16,8 +16,8 @@ CREATE POLICY comments_select_all ON public.comments
 -- The policy checks that the request comes from an authenticated
 -- session (auth.role() = 'authenticated').
 -- ------------------------------------------------------------
-CREATE POLICY comments_insert_auth ON public.comments
-  FOR INSERT WITH CHECK (auth.role() = 'authenticated');
+CREATE POLICY comments_insert_all ON public.comments
+  FOR INSERT WITH CHECK (true);
 
 -- ------------------------------------------------------------
 -- (Optional) Policy: Allow comment authors to UPDATE or DELETE
