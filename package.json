@@ -1,8 +1,5 @@
 {
   "name": "triumph-blog",
   "version": "1.0.0",
-  "private": true,
-  "devDependencies": {
-    "supabase": "^2.107.0"
-  }
+  "private": true
 }
