@@ -1,31 +1,24 @@
+# Netlify CMS configuration
 backend:
   name: git-gateway
-  branch: main # Default GitHub branch to commit changes
-
-media_folder: "simage"
-public_folder: "simage"
-
+  branch: main
+media_folder: "static/img"
+public_folder: "/img"
 collections:
-  - name: "content"
-    label: "Website Content"
-    files:
-      - file: "posts.json"
-        name: "posts"
-        label: "Blog Articles Database"
-        format: "json"
-        fields:
-          - name: "articles"
-            label: "Articles"
-            widget: "list"
-            fields:
-              - { label: "Post ID", name: "id", widget: "string", default: "1" }
-              - { label: "Title", name: "title", widget: "string" }
-              - { label: "Category", name: "category", widget: "select", options: ["investing", "markets", "crypto", "personal-finance"] }
-              - { label: "Tags", name: "tags", widget: "list" }
-              - { label: "Author", name: "author", widget: "string" }
-              - { label: "Author Bio Description", name: "authorBio", widget: "string" }
-              - { label: "Author profile Link", name: "authorLink", widget: "hidden", default: "about.html" }
-              - { label: "Date", name: "date", widget: "string" }
-              - { label: "Hero Image Path", name: "image", widget: "string", default: "simage/postiman.jpeg" }
-              - { label: "Summary description", name: "summary", widget: "text" }
-              - { label: "Article Content Body (HTML)", name: "body", widget: "markdown" }
+  - name: "posts"
+    label: "Posts"
+    folder: "content/posts"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Body", name: "body", widget: "markdown" }
+  - name: "comments"
+    label: "Comments"
+    folder: "content/comments"
+    create: true
+    slug: "{{id}}"
+    fields:
+      - { label: "Email", name: "email", widget: "string" }
+      - { label: "Content", name: "content", widget: "text" }
+      - { label: "Parent ID", name: "parent_id", widget: "number", required: false }

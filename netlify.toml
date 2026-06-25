@@ -1,0 +1,19 @@
+# netlify.toml
+# Redirect all /admin requests to the static admin page
+[[redirects]]
+  from = "/admin/*"
+  to = "/admin/index.html"
+  status = 200
+  force = true
+
+# Enable Netlify Identity and Git Gateway (the dashboard UI will be used to enable these)
+[build]
+  # No build steps needed for a static site – the site is already built.
+  publish = "./"
+
+[functions]
+  # No serverless functions in this repo (Edge Functions are deployed via Supabase).
+
+[context.production.environment]
+  # Place any environment variables you might need for the admin UI here.
+  # Example: NETLIFY_SITE_ID = "<your-site-id>"

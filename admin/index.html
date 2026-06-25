@@ -9,9 +9,25 @@
   <!-- Include Netlify Identity widget -->
   <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
   <script>
-    // Automatically point local Decap CMS to the production Netlify Identity service
+    // Ensure Decap CMS uses the correct Netlify Identity endpoint when running locally
     if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
-      localStorage.setItem("netlifySiteURL", "https://tryumph-magazine.netlify.app");
+      const config = window.CMS_CONFIG || {};
+      config.backend = config.backend || {};
+      config.backend.identity_url = "https://tryumph-magazine.netlify.app/.netlify/identity";
+      window.CMS_CONFIG = config;
+    }
+  </script>
+  <script>
+    // Initialize Decap CMS after config is set
+    if (window.netlifyIdentity) {
+      window.netlifyIdentity.on("init", user => {
+        if (!user) {
+          window.netlifyIdentity.on("login", () => {
+            // Reload after login to get fresh token
+            document.location.reload();
+          });
+        }
+      });
     }
   </script>
 </head>
