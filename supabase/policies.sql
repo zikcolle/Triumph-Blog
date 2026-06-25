@@ -34,17 +34,17 @@ CREATE POLICY comments_insert_auth ON public.comments
 
 -- ------------------------------------------------------------
 -- Secure the rls_auto_enable function (security definer).
--- Option A: Revoke public execution permissions.
+-- Revoke execution rights from both anon and authenticated roles.
 -- ------------------------------------------------------------
 REVOKE EXECUTE ON FUNCTION public.rls_auto_enable() FROM anon, authenticated;
 
 -- ------------------------------------------------------------
--- Option B: If the function does not need elevated privileges,
+-- Optionally, if the function does not need elevated privileges,
 -- switch it to SECURITY INVOKER instead of SECURITY DEFINER.
 -- ------------------------------------------------------------
 -- ALTER FUNCTION public.rls_auto_enable() SECURITY INVOKER;
 
 -- ------------------------------------------------------------
--- Option C: If you never use this helper function, simply drop it.
+-- If you never use this helper function, you may drop it.
 -- ------------------------------------------------------------
 -- DROP FUNCTION IF EXISTS public.rls_auto_enable();
