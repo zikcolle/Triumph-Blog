@@ -122,7 +122,10 @@
                 <div style="margin-top: 40px; background-color: var(--color-bg-card); border: 1px solid var(--color-border); padding: 30px; border-radius: var(--border-radius);">
                     <h3 style="font-size: 1.4rem; margin-bottom: 15px; color: var(--color-primary); font-family: var(--font-heading);">Join the Discussion</h3>
                     <form id="comment-form">
-                        <input type="text" id="comment-name" class="comment-input" required placeholder="Your Name">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 12px;">
+                            <input type="text" id="comment-name" class="comment-input" required placeholder="Your Name" style="margin-bottom: 0;">
+                            <input type="email" id="comment-email" class="comment-input" placeholder="Your Email (optional, for reply notifications)" style="margin-bottom: 0;">
+                        </div>
                         <textarea id="comment-body" class="comment-textarea" rows="4" required placeholder="Write a comment..."></textarea>
                         <button type="submit" class="comment-submit-btn">Post Comment</button>
                     </form>

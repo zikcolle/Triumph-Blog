@@ -9,7 +9,8 @@
 // automatically fall back to local storage (safe for offline testing).
 const SUPABASE_CONFIG = {
     url: "https://isxjekzmqquxipahaack.supabase.co",      // Paste your Supabase Project URL here (e.g. https://xxxx.supabase.co)
-    anonKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlzeGpla3ptcXF1eGlwYWhhYWNrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIzMDgzMTUsImV4cCI6MjA5Nzg4NDMxNX0.lJNmujk6NfEQG-tloi39Qj_w5saVTw1jwBdgANU44mQ"  // Paste your Supabase Public Anon Key here
+    anonKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlzeGpla3ptcXF1eGlwYWhhYWNrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIzMDgzMTUsImV4cCI6MjA5Nzg4NDMxNX0.lJNmujk6NfEQG-tloi39Qj_w5saVTw1jwBdgANU44mQ",  // Paste your Supabase Public Anon Key here
+    notificationWebhookUrl: "" // Optional: Webhook URL (e.g. Zapier/Make) to trigger email alerts on replies
 };
 
 /* 
@@ -163,6 +164,9 @@ const COMMENTS_API = {
                 });
                 if (response.ok) {
                     return await response.json();
+                } else {
+                    const errBody = await response.text();
+                    console.error(`Supabase error fetching comments (status ${response.status}):`, errBody);
                 }
             } catch (e) {
                 console.error("Failed to connect to Supabase database. Falling back to local storage comments.", e);
@@ -188,12 +192,22 @@ const COMMENTS_API = {
                     body: JSON.stringify({
                         post_id: postId,
                         name: comment.name,
+                        email: comment.email || null,
                         comment: comment.comment,
-                        date: comment.date
+                        date: comment.date,
+                        parent_id: comment.parent_id || null
                     })
                 });
                 if (response.ok) {
+                    const data = await response.json();
+                    const newComment = data[0] || comment;
+                    if (newComment.parent_id) {
+                        triggerNotification(postId, newComment);
+                    }
                     return await this.getComments(postId);
+                } else {
+                    const errBody = await response.text();
+                    console.error(`Supabase error saving comment (status ${response.status}):`, errBody);
                 }
             } catch (e) {
                 console.error("Failed to insert comment to Supabase database. Falling back to local storage comments.", e);
@@ -202,11 +216,41 @@ const COMMENTS_API = {
 
         // LocalStorage Fallback
         const comments = JSON.parse(localStorage.getItem(`comments_${postId}`)) || [];
+        comment.id = comment.id || String(Date.now());
         comments.push(comment);
         localStorage.setItem(`comments_${postId}`, JSON.stringify(comments));
+        if (comment.parent_id) {
+            triggerNotification(postId, comment);
+        }
         return comments;
     }
 };
+
+async function triggerNotification(postId, replyComment) {
+    console.log(`[Notification Triggered] Comment reply from: ${replyComment.name} on post ${postId}.`);
+    if (SUPABASE_CONFIG.notificationWebhookUrl) {
+        try {
+            const res = await fetch(SUPABASE_CONFIG.notificationWebhookUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    post_id: postId,
+                    reply_author: replyComment.name,
+                    reply_comment: replyComment.comment,
+                    reply_date: replyComment.date,
+                    parent_id: replyComment.parent_id
+                })
+            });
+            if (!res.ok) {
+                console.warn(`Webhook endpoint returned status ${res.status}`);
+            }
+        } catch (err) {
+            console.error("Failed to trigger webhook email alert:", err);
+        }
+    }
+}
 
 // ==========================================================================
 // UTILITY ENGINE
@@ -538,6 +582,61 @@ async function loadCommentsSection(postId) {
 
     if (!commentsList) return;
 
+    // Expose toggleReplyForm to global scope so inline cancel buttons or HTML event handlers can reference it
+    window.toggleReplyForm = (parentId) => {
+        const container = document.getElementById(`reply-form-container-${parentId}`);
+        if (!container) return;
+
+        // If reply form already open, close it
+        if (container.innerHTML !== '') {
+            container.innerHTML = '';
+            return;
+        }
+
+        // Close any other open reply forms
+        document.querySelectorAll('[id^="reply-form-container-"]').forEach(el => el.innerHTML = '');
+
+        const formHTML = `
+            <form id="reply-form-${parentId}" class="inline-reply-box">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <input type="text" id="reply-name-${parentId}" class="comment-input" required placeholder="Your Name" style="margin-bottom: 0; padding: 8px 12px; font-size: 0.88rem;">
+                    <input type="email" id="reply-email-${parentId}" class="comment-input" placeholder="Your Email (optional)" style="margin-bottom: 0; padding: 8px 12px; font-size: 0.88rem;">
+                </div>
+                <textarea id="reply-body-${parentId}" class="comment-textarea" rows="3" required placeholder="Write a reply..." style="margin-bottom: 0; padding: 8px 12px; font-size: 0.88rem;"></textarea>
+                <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                    <button type="button" class="comment-submit-btn" style="background-color: var(--color-text-muted); padding: 8px 16px; font-size: 0.85rem;" onclick="window.toggleReplyForm('${parentId}')">Cancel</button>
+                    <button type="submit" class="comment-submit-btn" style="padding: 8px 16px; font-size: 0.85rem;">Post Reply</button>
+                </div>
+            </form>
+        `;
+        container.innerHTML = formHTML;
+
+        const rForm = document.getElementById(`reply-form-${parentId}`);
+        if (rForm) {
+            rForm.onsubmit = async (e) => {
+                e.preventDefault();
+                const nameInput = document.getElementById(`reply-name-${parentId}`);
+                const emailInput = document.getElementById(`reply-email-${parentId}`);
+                const bodyInput = document.getElementById(`reply-body-${parentId}`);
+
+                if (nameInput && bodyInput) {
+                    const now = new Date();
+                    const dateString = now.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+                    
+                    await COMMENTS_API.addComment(postId, {
+                        name: nameInput.value,
+                        email: emailInput ? emailInput.value : '',
+                        comment: bodyInput.value,
+                        date: dateString,
+                        parent_id: parentId
+                    });
+
+                    await renderComments();
+                }
+            };
+        }
+    };
+
     const renderComments = async () => {
         const comments = await COMMENTS_API.getComments(postId);
         commentsCount.textContent = `${comments.length} comment${comments.length !== 1 ? 's' : ''}`;
@@ -548,17 +647,61 @@ async function loadCommentsSection(postId) {
             return;
         }
 
+        // Build a map of comments by ID
+        const commentMap = {};
         comments.forEach(c => {
-            const commentHTML = `
-                <div class="comment-item" style="border-bottom: 1px solid var(--color-border); padding: 15px 0;">
+            c.id = String(c.id);
+            c.replies = [];
+            commentMap[c.id] = c;
+        });
+
+        const rootComments = [];
+        comments.forEach(c => {
+            if (c.parent_id && commentMap[String(c.parent_id)]) {
+                commentMap[String(c.parent_id)].replies.push(c);
+            } else {
+                rootComments.push(c);
+            }
+        });
+
+        // Helper function to render a comment and its nested replies
+        const renderCommentHtml = (c, isReply = false) => {
+            const replyBadge = isReply ? `<span class="reply-badge">Reply</span>` : '';
+            return `
+                <div class="comment-item" id="comment-node-${c.id}" style="border-bottom: 1px solid var(--color-border); padding: 15px 0;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                        <span style="font-weight: 700; color: var(--color-secondary);">${c.name}</span>
+                        <div>
+                            <span style="font-weight: 700; color: var(--color-secondary);">${c.name}</span>
+                            ${replyBadge}
+                        </div>
                         <span style="font-size: 0.75rem; color: var(--color-text-muted);">${c.date}</span>
                     </div>
                     <p style="margin: 0; font-size: 0.95rem; line-height: 1.5; color: var(--color-text-main);">${c.comment}</p>
+                    <div class="comment-meta-actions">
+                        <button class="comment-reply-btn" data-comment-id="${c.id}">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 3px;"><polyline points="9 17 4 12 9 7"></polyline><path d="M20 18v-2a4 4 0 0 0-4-4H4"></path></svg>
+                            Reply
+                        </button>
+                    </div>
+                    <div id="reply-form-container-${c.id}"></div>
+                    ${c.replies.length > 0 ? `
+                        <div class="replies-container">
+                            ${c.replies.map(r => renderCommentHtml(r, true)).join('')}
+                        </div>
+                    ` : ''}
                 </div>
             `;
-            commentsList.insertAdjacentHTML('beforeend', commentHTML);
+        };
+
+        commentsList.innerHTML = rootComments.map(c => renderCommentHtml(c)).join('');
+
+        // Attach event listeners to reply buttons
+        const replyButtons = commentsList.querySelectorAll('.comment-reply-btn');
+        replyButtons.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const parentId = btn.getAttribute('data-comment-id');
+                window.toggleReplyForm(parentId);
+            });
         });
     };
 
@@ -568,6 +711,7 @@ async function loadCommentsSection(postId) {
         commentForm.onsubmit = async (e) => {
             e.preventDefault();
             const nameInput = document.getElementById('comment-name');
+            const emailInput = document.getElementById('comment-email');
             const bodyInput = document.getElementById('comment-body');
 
             if (nameInput && bodyInput) {
@@ -576,11 +720,13 @@ async function loadCommentsSection(postId) {
                 
                 await COMMENTS_API.addComment(postId, {
                     name: nameInput.value,
+                    email: emailInput ? emailInput.value : '',
                     comment: bodyInput.value,
                     date: dateString
                 });
 
                 bodyInput.value = '';
+                if (emailInput) emailInput.value = '';
                 nameInput.value = '';
                 await renderComments();
             }

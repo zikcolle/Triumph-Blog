@@ -6,6 +6,14 @@
   <title>Tryumph Content Manager | CMS Panel</title>
   <!-- Include Decap CMS script CDN library -->
   <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+  <!-- Include Netlify Identity widget -->
+  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+  <script>
+    // Automatically point local Decap CMS to the production Netlify Identity service
+    if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
+      localStorage.setItem("netlifySiteURL", "https://tryumph-magazine.netlify.app");
+    }
+  </script>
 </head>
 <body>
 </body>
