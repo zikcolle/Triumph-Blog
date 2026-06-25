@@ -4,69 +4,9 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Tryumph Content Manager | CMS Panel</title>
-
-  <!-- Decap CMS script -->
   <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
-  <!-- Netlify Identity widget -->
   <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
-
-  <script>
-<script>
-  // Initialise Netlify Identity and protect the CMS UI
-  if (window.netlifyIdentity) {
-    // When Identity is ready, check if a user is logged in
-    netlifyIdentity.on('init', user => {
-      if (!user) {
-        // No user – show the built‑in Netlify Identity widget login modal
-        netlifyIdentity.open('login');
-        return;
-      }
-
-      // User is authenticated – set up Decap CMS configuration
-      const cmsConfig = {
-        backend: { name: "git-gateway", branch: "main" },
-        media_folder: "static/img",
-        public_folder: "/img",
-        collections: [
-          {
-            name: "posts",
-            label: "Posts",
-            folder: "content/posts",
-            create: true,
-            slug: "{{slug}}",
-            fields: [
-              { label: "Title", name: "title", widget: "string" },
-              { label: "Body", name: "body", widget: "markdown" }
-            ]
-          },
-          {
-            name: "comments",
-            label: "Comments",
-            folder: "content/comments",
-            create: true,
-            slug: "{{id}}",
-            fields: [
-              { label: "Email", name: "email", widget: "string" },
-              { label: "Content", name: "content", widget: "text" },
-              { label: "Parent ID", name: "parent_id", widget: "number", required: false }
-            ]
-          }
-        ]
-      };
-      // Initialise Decap CMS UI now that we have a logged‑in user
-      if (window.CMS) {
-        window.CMS.init({ config: cmsConfig });
-      }
-    });
-
-    // Refresh the page when login status changes
-    netlifyIdentity.on('login', () => window.location.reload());
-    netlifyIdentity.on('logout', () => window.location.reload());
-  }
-</script>
-  </script>
 </head>
 <body>
-  <div id="nc-root"></div>
 </body>
 </html>
