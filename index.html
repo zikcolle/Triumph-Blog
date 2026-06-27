@@ -35,7 +35,7 @@
                 <li><a href="blog.html">Blog</a></li>
                 <li><a href="about.html">About</a></li>
                 <li><a href="contact.html">Contact</a></li>
-                <li><button id="theme-toggle-btn" class="theme-toggle-btn" aria-label="Toggle Theme">🌙</button></li>
+                <li><button id="theme-toggle-btn" class="theme-toggle-btn" aria-label="Toggle Theme"></button></li>
             </ul>
         </nav>
     </header>
@@ -98,32 +98,10 @@
         </section>
 
         <!-- Fixed Related Posts Footer Section -->
-        <section class="related-posts-section">
-            <h2 class="label-post">Related Posts</h2>
-            <div class="related-posts-grid">
-                <div class="rel-post-card">
-                    <img src="simage/postiman.jpeg" alt="Recent post preview">
-                    <div class="rel-post-card-content">
-                        <span>Personal Finance</span>
-                        <h4><a href="post.html?id=1">How to make money online as a beginner</a></h4>
-                    </div>
-                </div>
-                <div class="rel-post-card">
-                    <img src="simage/postiman.jpeg" alt="Recent post preview">
-                    <div class="rel-post-card-content">
-                        <span>Markets</span>
-                        <h4><a href="post.html?id=2">First Post on Tryumph Mag</a></h4>
-                    </div>
-                </div>
-                <div class="rel-post-card">
-                    <img src="simage/postiman.jpeg" alt="Recent post preview">
-                    <div class="rel-post-card-content">
-                        <span>Investing</span>
-                        <h4><a href="post.html?id=3">Second Post on Tryumph Mag</a></h4>
-                    </div>
-                </div>
+             <div>
+                <h2 class="label-post">Related Posts</h2>
             </div>
-        </section>
+            <div class="related-posts-grid"></div>
     </main>
 
     <!-- Floating Back to Top Button -->
@@ -143,19 +121,8 @@
         </div>
     </footer>
 
+    <script src="blogger.js"></script>
     <script src="script.js"></script>
-    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
-    <script>
-        if (window.netlifyIdentity) {
-            window.netlifyIdentity.on("init", user => {
-                if (!user) {
-                    window.netlifyIdentity.on("login", () => {
-                        document.location.href = "/admin/";
-                    });
-                }
-            });
-        }
-    </script>
 </body>
 
 </html>

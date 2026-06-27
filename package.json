@@ -2,7 +2,5 @@
   "name": "triumph-blog",
   "version": "1.0.0",
   "private": true,
-  "dependencies": {
-    "@netlify/identity": "^1.2.0"
-  }
+  "dependencies": {}
 }

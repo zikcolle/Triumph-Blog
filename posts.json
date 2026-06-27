@@ -1,56 +1,17 @@
 {
-    "articles": [
-        {
-            "id": "1",
-            "title": "How to make money online as a beginner: The Complete 2026 Guide",
-            "category": "personal-finance",
-            "tags": ["Personal Finance", "#SideHustle"],
-            "author": "Zikcolle",
-            "authorBio": "Financial analyst, trader, and founder of Tryumph's digital newsletter program.",
-            "authorLink": "about.html",
-            "date": "June 22, 2026",
-            "image": "simage/postiman.jpeg",
-            "summary": "In this post you will learn how to make money as a beginner as we delve into 20 ways you can earn using your phone and the internet.",
-            "body": "<p>In this post you will learn how to make money as a beginner as we delve into 20 proven methods to earn online. Millions of people leverage the digital space every single day to replace their full-time jobs, build passive side incomes, or launch high-growth careers. The methods below are verified, secure, and ideal for starting today.</p><h2>1. Leveraging Digital Agency Models</h2><p>The first model is similar to the traditional agency path. This requires gathering as much high-quality digital experience as possible (e.g., SEO, copy editing, copywriting, lead generation) and pitching these services directly to local businesses who need to optimize their web Presence. Since you act as an intermediary, you gain massive leverage with low capital constraints.</p><blockquote>\"Success in digital finance comes down to operational leverage and keeping customer acquisition costs low.\"</blockquote><p>By finding high-paying clients and outsourcing the workload to freelancers, you can scale the business indefinitely.</p>"
-        },
-        {
-            "id": "2",
-            "title": "First Post on Tryumph Mag: The Geopolitical Shift",
-            "category": "markets",
-            "tags": ["Markets", "#GlobalNews"],
-            "author": "Zikcolle",
-            "authorBio": "Financial analyst, trader, and founder of Tryumph's digital newsletter program.",
-            "authorLink": "about.html",
-            "date": "June 22, 2026",
-            "image": "simage/postiman.jpeg",
-            "summary": "In this post we talk about things going on in the world, like wars, fight, countries resources, entertainment, politics.",
-            "body": "<p>Global markets are shifting at an unprecedented pace. In this post, we discuss resource economics, international trade tensions, and the direct ripple effects on retail investment portfolios.</p><h2>Understanding Macro Risks</h2><p>Political actions directly drive energy commodities. Investors must position themselves defensively to hedge against potential inflation spikes.</p>"
-        },
-        {
-            "id": "3",
-            "title": "Second Post on Tryumph Mag: Portfolio Allocations",
-            "category": "investing",
-            "tags": ["Investing", "#Stocks"],
-            "author": "Zikcolle",
-            "authorBio": "Financial analyst, trader, and founder of Tryumph's digital newsletter program.",
-            "authorLink": "about.html",
-            "date": "June 22, 2026",
-            "image": "simage/postiman.jpeg",
-            "summary": "In this post we talk about things going on in the world, like wars, fight, countries resources, entertainment, politics.",
-            "body": "<p>Building long-term generational wealth requires a strategic allocation plan. We unpack the classic 60/40 model and how modern alternatives fit in.</p>"
-        },
-        {
-            "id": "4",
-            "title": "Third Post on Tryumph Mag: Bitcoin and Beyond",
-            "category": "crypto",
-            "tags": ["Cryptocurrency", "#Bitcoin"],
-            "author": "Zikcolle",
-            "authorBio": "Financial analyst, trader, and founder of Tryumph's digital newsletter program.",
-            "authorLink": "about.html",
-            "date": "June 22, 2026",
-            "image": "simage/postiman.jpeg",
-            "summary": "In this post we talk about things going on in the world, like wars, fight, countries resources, entertainment, politics.",
-            "body": "<p>Is Bitcoin still the ultimate store of value? We look at decentralized finance metrics, institutional inflows, and regulatory frameworks heading into late 2026.</p>"
-        }
-    ]
+  "articles": [
+    {
+      "id": "1",
+      "title": "How to make money online as a beginner: The Complete 2026 Guide",
+      "category": "personal-finance",
+      "tags": ["Personal Finance", "#SideHustle"],
+      "author": "Zikcolle",
+      "authorBio": "Financial analyst, trader, and founder of Tryumph's digital newsletter program.",
+      "authorLink": "about.html",
+      "date": "June 22, 2026",
+      "image": "simage/postiman.jpeg",
+      "summary": "In this post you will learn how to make money as a beginner as we delve into 20 ways you can earn using your phone and the internet.",
+      "body": "<p>In this post you will learn how to make money as a beginner as we delve into 20 proven methods to earn online. Millions of people leverage the digital space every single day to replace their full‑time jobs, build passive side incomes, or launch high‑growth careers. The methods below are verified, secure, and ideal for starting today.</p>"
+    }
+  ]
 }

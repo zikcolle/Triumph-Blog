@@ -13,6 +13,10 @@ const SUPABASE_CONFIG = {
     notificationWebhookUrl: "" // Optional: Webhook URL (e.g. Zapier/Make) to trigger email alerts on replies
 };
 
+// Optional Blogger integration. If you set either a feed URL or blog ID,
+// the site will try to pull posts from Blogger before falling back to Supabase/local content.
+// Duplicate BLOGGER_CONFIG removed; using config from blogger.js
+
 /* 
  * SQL schema to create the 'comments' table in your Supabase SQL Editor:
  *
@@ -94,55 +98,178 @@ function updateThemeIcon(theme) {
 }
 
 // ==========================================================================
-// CMS DATA LAYER (Tryumph Branding with posts.json fetch)
+// CMS DATA LAYER (Supabase-backed article storage with local fallback)
 // ==========================================================================
 const CMS_API = {
-    // Local starter fallback articles if network fetch fails
-    defaultArticles: [
-        {
-            id: "1",
-            title: "How to make money online as a beginner: The Complete 2026 Guide",
-            category: "personal-finance",
-            tags: ["Personal Finance", "#SideHustle"],
-            author: "Zikcolle",
-            authorBio: "Financial analyst, trader, and founder of Tryumph's digital newsletter program.",
-            authorLink: "about.html",
-            date: "June 22, 2026",
-            image: "simage/postiman.jpeg",
-            summary: "In this post you will learn how to make money as a beginner as we delve into 20 ways you can earn using your phone and the internet.",
-            body: "<p>In this post you will learn how to make money as a beginner as we delve into 20 proven methods to earn online. Millions of people leverage the digital space every single day to replace their full-time jobs, build passive side incomes, or launch high-growth careers. The methods below are verified, secure, and ideal for starting today.</p><h2>1. Leveraging Digital Agency Models</h2><p>The first model is similar to the traditional agency path. This requires gathering as much high-quality digital experience as possible (e.g., SEO, copy editing, copywriting, lead generation) and pitching these services directly to local businesses who need to optimize their web Presence. Since you act as an intermediary, you gain massive leverage with low capital constraints.</p><blockquote>\"Success in digital finance comes down to operational leverage and keeping customer acquisition costs low.\"</blockquote><p>By finding high-paying clients and outsourcing the workload to freelancers, you can scale the business indefinitely.</p>"
-        }
-    ],
+    defaultArticles: [],
 
-    // Try fetching posts.json, fall back to localStorage if offline/local file
+    getStorageKey() {
+        return 'triumph_articles';
+    },
+
+    normalizeArticle(article = {}) {
+        const tags = Array.isArray(article.tags)
+            ? article.tags
+            : (article.tags ? String(article.tags).split(',').map(tag => tag.trim()).filter(Boolean) : []);
+
+        // Never use the old broken path; fall back to the local SVG placeholder
+        const rawImage = article.image || '';
+        const image = (rawImage && !rawImage.includes('postiman')) ? rawImage : 'assets/placeholder.svg';
+
+        return {
+            id: article.id || `post_${Date.now()}`,
+            title: article.title || '',
+            category: article.category || 'personal-finance',
+            tags,
+            author: article.author || 'Zikcolle',
+            authorBio: article.authorBio || article.author_bio || '',
+            authorLink: article.authorLink || article.author_link || 'about.html',
+            date: article.date || new Date().toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }),
+            image,
+            summary: article.summary || '',
+            body: article.body || '',
+            link: ''   // Never redirect to external URL
+        };
+    },
+
+    async getBloggerArticles() {
+        const feedUrl = BLOGGER_CONFIG.feedUrl || (BLOGGER_CONFIG.blogId ? `https://www.blogger.com/feeds/${BLOGGER_CONFIG.blogId}/posts/default?alt=json&max-results=${BLOGGER_CONFIG.maxResults}` : '');
+
+        if (!feedUrl) {
+            return null;
+        }
+
+        try {
+            const proxyUrl = 'http://localhost:3002';
+        const response = await fetch(proxyUrl);
+            if (!response.ok) {
+                throw new Error(`Blogger feed returned ${response.status}`);
+            }
+
+            const data = await response.json();
+            console.log('🟢 Blogger feed data fetched:', data);
+            const entries = Array.isArray(data?.feed?.entry) ? data.feed.entry : [];
+            if (!entries.length) {
+                return [];
+            }
+
+            const articles = entries.map((entry, index) => {
+                const content = entry.content?.$t || '';
+                const summary = entry.summary?.$t || '';
+                const title = entry.title?.$t || 'Untitled Post';
+                const categories = (entry.category || []).map(item => item.term).filter(Boolean);
+                const firstImage = content.match(/<img[^>]+src=['"]([^'"]+)['"]/i)?.[1] || '';
+                const published = entry.published?.$t || entry.updated?.$t || '';
+                const author = entry.author?.[0]?.name?.$t || 'Author';
+                const alternateLink = (entry.link || []).find(link => link.rel === 'alternate')?.href || '';
+
+                return this.normalizeArticle({
+                    id: entry.id?.$t || `blogger-${index + 1}`,
+                    title,
+                    category: categories[0] || 'personal-finance',
+                    tags: categories,
+                    author,
+                    authorBio: '',
+                    authorLink: alternateLink || 'about.html',
+                    date: published ? new Date(published).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }) : new Date().toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }),
+                    image: firstImage || 'simage/postiman.jpeg',
+                    summary: summary.replace(/<[^>]*>/g, '').trim() || content.replace(/<[^>]*>/g, '').trim().slice(0, 180),
+                    body: content,
+                    link: alternateLink
+                });
+            });
+
+            return articles.sort((a, b) => new Date(b.date) - new Date(a.date));
+        } catch (e) {
+            console.warn('Blogger feed unavailable. Falling back to other sources.', e);
+            return null;
+        }
+    },
+
     async getArticles() {
+        if (typeof getBloggerPosts === 'function') {
+            return await getBloggerPosts();
+        }
+        // Attempt to fetch articles from Blogger feed first
+        const bloggerArticles = await this.getBloggerArticles();
+        if (Array.isArray(bloggerArticles) && bloggerArticles.length > 0) {
+            localStorage.setItem(this.getStorageKey(), JSON.stringify(bloggerArticles));
+            return bloggerArticles;
+        }
+        // Fallback: fetch static posts.json
         try {
             const response = await fetch('posts.json');
             if (response.ok) {
-                // If it is in Decap CMS wrapper schema, parse array correctly
                 const data = await response.json();
-                return data.articles ? data.articles : data;
+                const articles = (data.articles ? data.articles : data).map(article => this.normalizeArticle(article));
+                localStorage.setItem(this.getStorageKey(), JSON.stringify(articles));
+                return articles;
             }
         } catch (e) {
-            console.log("Offline or local filesystem path. Loading local database copy.");
+            console.warn('Failed to load local posts.json fallback.', e);
         }
-
-        // Local Storage fallback
-        if (!localStorage.getItem('triumph_articles')) {
-            localStorage.setItem('triumph_articles', JSON.stringify(this.defaultArticles));
+        // Return stored articles if any
+        const stored = JSON.parse(localStorage.getItem(this.getStorageKey()) || 'null');
+        if (Array.isArray(stored) && stored.length > 0) {
+            return stored.map(article => this.normalizeArticle(article));
         }
-        return JSON.parse(localStorage.getItem('triumph_articles'));
+        // Default fallback to built‑in articles
+        localStorage.setItem(this.getStorageKey(), JSON.stringify(this.defaultArticles));
+        return this.defaultArticles;
     },
 
     async getArticleById(id) {
+        if (typeof getBloggerPostById === 'function') {
+            return await getBloggerPostById(id);
+        }
         const articles = await this.getArticles();
-        return articles.find(article => article.id === id);
+        return articles.find(article => String(article.id) === String(id));
     },
 
     async publishArticle(article) {
-        const articles = await this.getArticles();
-        articles.unshift(article);
-        localStorage.setItem('triumph_articles', JSON.stringify(articles));
+        const normalizedArticle = this.normalizeArticle(article);
+
+        try {
+            if (SUPABASE_CONFIG.url && SUPABASE_CONFIG.anonKey) {
+                const url = `${SUPABASE_CONFIG.url}/rest/v1/articles?select=*`;
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'apikey': SUPABASE_CONFIG.anonKey,
+                        'Authorization': `Bearer ${SUPABASE_CONFIG.anonKey}`,
+                        'Content-Type': 'application/json',
+                        'Prefer': 'return=representation'
+                    },
+                    body: JSON.stringify({
+                        id: normalizedArticle.id,
+                        title: normalizedArticle.title,
+                        category: normalizedArticle.category,
+                        tags: normalizedArticle.tags,
+                        author: normalizedArticle.author,
+                        authorBio: normalizedArticle.authorBio,
+                        authorLink: normalizedArticle.authorLink,
+                        date: normalizedArticle.date,
+                        image: normalizedArticle.image,
+                        summary: normalizedArticle.summary,
+                        body: normalizedArticle.body
+                    })
+                });
+
+                if (response.ok) {
+                    const createdArticle = await response.json();
+                    const existingArticles = await this.getArticles();
+                    const updatedArticles = [this.normalizeArticle(createdArticle[0] || normalizedArticle), ...existingArticles.filter(existing => String(existing.id) !== String(normalizedArticle.id))];
+                    localStorage.setItem(this.getStorageKey(), JSON.stringify(updatedArticles));
+                    return true;
+                }
+            }
+        } catch (e) {
+            console.error('Supabase article save failed. Falling back to local storage.', e);
+        }
+
+        const existingArticles = await this.getArticles();
+        const updatedArticles = [normalizedArticle, ...existingArticles.filter(existing => String(existing.id) !== String(normalizedArticle.id))];
+        localStorage.setItem(this.getStorageKey(), JSON.stringify(updatedArticles));
         return true;
     }
 };
@@ -267,40 +394,84 @@ function calculateReadingTime(text) {
 let activeCategory = 'all';
 let currentArticlesList = [];
 
+// ------------------------------
+// Related Posts Rendering Helpers
+// ------------------------------
+/**
+ * Generates HTML for a related post card.
+ * @param {Object} article - Article object.
+ * @returns {string} HTML string for the card.
+ */
+function relatedPostCardHTML(article) {
+    const img = article.image || 'assets/placeholder.svg';
+    return `
+        <div class="rel-post-card">
+            <img src="${img}" alt="Related post preview" onerror="this.src='assets/placeholder.svg'">
+            <div class="rel-post-card-content">
+                <span>${article.category}</span>
+                <h4><a href="post.html?id=${article.id}" target="_self" rel="noopener noreferrer">${article.title}</a></h4>
+            </div>
+        </div>`;
+}
+
+/**
+ * Populates all containers marked for related posts with a list of articles.
+ * @param {Array} articles - Full list of articles.
+ * @param {string|null} excludeId - Optional article ID to exclude (e.g., the current article).
+ */
+function populateRelatedPosts(articles, excludeId = null) {
+    // Containers can be: .sidebar-rel-posts (in post.html sidebar) or .related-posts-grid (footer sections).
+    const containers = document.querySelectorAll('.sidebar-rel-posts, .related-posts-grid');
+    containers.forEach(container => {
+        // Clear existing content
+        container.innerHTML = '';
+        // Choose up to 4 articles, excluding the current one if provided.
+        const filtered = articles.filter(a => a.id !== excludeId).slice(0, 4);
+        filtered.forEach(a => {
+            container.insertAdjacentHTML('beforeend', relatedPostCardHTML(a));
+        });
+    });
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
-    CMS_API.init ? CMS_API.init() : null;
-    initTheme();
+    try {
+        console.log('🔎 DOMContentLoaded – initializing');
+        initTheme();
 
-    const path = window.location.pathname;
-    const isHome = path.includes('index.html') || path.endsWith('/');
-    const isBlog = path.includes('blog.html');
-    const isPost = path.includes('post.html');
-    const isCMS = path.includes('cms.html');
-    const isPress = path.includes('submit-press.html');
+        const path = window.location.pathname;
+        const urlParams = new URLSearchParams(window.location.search);
+        const postId = urlParams.get('id');
+        const isHome = path.includes('index.html') || path.endsWith('/') || path === '';
+        const isBlog = path.includes('blog.html');
+        const isPost = path.includes('post.html');
+        const isCMS = path.includes('cms.html');
+        const isPress = path.includes('submit-press.html');
 
-    const themeBtn = document.getElementById('theme-toggle-btn');
-    if (themeBtn) {
-        themeBtn.addEventListener('click', toggleTheme);
-    }
+        const themeBtn = document.getElementById('theme-toggle-btn');
+        if (themeBtn) {
+            themeBtn.addEventListener('click', toggleTheme);
+        }
 
-    const params = new URLSearchParams(window.location.search);
-    const categoryParam = params.get('cat');
-    if (categoryParam) {
-        activeCategory = categoryParam;
-    }
+        const categoryParam = urlParams.get('cat');
+        if (categoryParam) {
+            activeCategory = categoryParam;
+        }
 
-    initBackToTop();
+        initBackToTop();
 
-    if (isHome) {
-        loadHomePage();
-    } else if (isBlog) {
-        loadBlogPage();
-    } else if (isPost) {
-        loadPostPage();
-    } else if (isCMS) {
-        loadCMSPage();
-    } else if (isPress) {
-        loadPressSubmissionPage();
+        if (isHome) {
+            await loadHomePage();
+        } else if (isBlog) {
+            await loadBlogPage();
+        } else if (isPost) {
+            await loadPostPage(postId);
+        } else if (isCMS) {
+            loadCMSPage();
+        } else if (isPress) {
+            loadPressSubmissionPage();
+        }
+    } catch (err) {
+        console.error('❌ Fatal initialization error:', err);
     }
 });
 
@@ -371,7 +542,7 @@ function renderFilteredArticles() {
         const cardHTML = `
             <div class="blog-post" data-category="${article.category}">
                 <div class="blog-post-image-wrapper">
-                    <img src="${article.image || 'simage/postiman.jpeg'}" alt="${article.title}">
+                    <img src="${article.image || 'assets/placeholder.svg'}" alt="${article.title}" class="post-hero-image">
                 </div>
                 <div class="post-meta">
                     <span class="meta-author">By ${article.author}</span>
@@ -380,13 +551,13 @@ function renderFilteredArticles() {
                     <span class="meta-divider">&bull;</span>
                     <span class="meta-time">${readTime} min read</span>
                 </div>
-                <h2><a href="post.html?id=${article.id}">${article.title}</a></h2>
+                <h2><a href="post.html?id=${article.id}" target="_self" rel="noopener noreferrer">${article.title}</a></h2>
                 <p>${article.summary}</p>
                 <div class="post-tags-container">
                     <span class="tags-label">Tags:</span>
                     ${tagHTML}
                 </div>
-                <a href="post.html?id=${article.id}" class="read-more">Read More</a>
+                <a href="post.html?id=${article.id}" target="_self" rel="noopener noreferrer" class="read-more">Read More</a>
             </div>
         `;
         postGrid.insertAdjacentHTML('beforeend', cardHTML);
@@ -399,6 +570,10 @@ async function loadHomePage() {
     
     const featured = currentArticlesList[0];
     const featPostContainer = document.querySelector('.feat-post');
+
+    // Render related posts for the home page footer (no excluded ID)
+    populateRelatedPosts(currentArticlesList);
+
     
     if (featured && featPostContainer) {
         const readTime = calculateReadingTime(featured.body || featured.summary);
@@ -407,7 +582,7 @@ async function loadHomePage() {
         featPostContainer.setAttribute('data-category', featured.category);
         featPostContainer.innerHTML = `
             <div class="feat-post-image-wrapper">
-                <img src="${featured.image || 'simage/postiman.jpeg'}" alt="${featured.title}">
+                <img src="${featured.image || 'assets/placeholder.svg'}" alt="${featured.title}" class="post-hero-image">
             </div>
             <div class="feat-content">
                 <div class="post-meta">
@@ -417,13 +592,13 @@ async function loadHomePage() {
                     <span class="meta-divider">&bull;</span>
                     <span class="meta-time">${readTime} min read</span>
                 </div>
-                <h2><a href="post.html?id=${featured.id}">${featured.title}</a></h2>
+                <h2><a href="post.html?id=${featured.id}" target="_self" rel="noopener noreferrer">${featured.title}</a></h2>
                 <p>${featured.summary}</p>
                 <div class="post-tags-container">
                     <span class="tags-label">Tags:</span>
                     ${tags}
                 </div>
-                <a href="post.html?id=${featured.id}" class="read-more">Read More</a>
+                <a href="post.html?id=${featured.id}" target="_self" rel="noopener noreferrer" class="read-more">Read More</a>
             </div>
         `;
     }
@@ -464,7 +639,7 @@ function renderExploreByCategory(articles) {
             matchingPosts.forEach(post => {
                 listHTML += `
                     <li>
-                        <a href="post.html?id=${post.id}">${post.title}</a>
+                        <a href="post.html?id=${post.id}" target="_self" rel="noopener noreferrer">${post.title}</a>
                         <span style="font-size: 0.75rem; color: var(--color-text-muted); display: block; margin-top: 2px;">${post.date}</span>
                     </li>
                 `;
@@ -485,8 +660,11 @@ function renderExploreByCategory(articles) {
 
 async function loadBlogPage() {
     currentArticlesList = await CMS_API.getArticles();
+    console.log('🟢 Blog page loaded articles count:', currentArticlesList.length);
     renderFilteredArticles();
-
+    // Populate related posts grid at the bottom of the blog page
+    populateRelatedPosts(currentArticlesList);
+    
     const blogSearch = document.getElementById('blog-search-input');
     if (blogSearch) {
         blogSearch.addEventListener('input', (e) => {
@@ -495,26 +673,31 @@ async function loadBlogPage() {
     }
 }
 
-async function loadPostPage() {
-    const params = new URLSearchParams(window.location.search);
-    const postId = params.get('id') || "1";
-    
-    const article = await CMS_API.getArticleById(postId);
-    if (!article) {
-        document.querySelector('main').innerHTML = `
-            <div style="text-align: center; padding: 80px 0;">
-                <h2>Article Not Found</h2>
-                <p>The post you are searching for does not exist or has been deleted.</p>
-                <a href="index.html" class="view-more">Back to Home</a>
-            </div>
-        `;
+async function loadPostPage(postId) {
+    if (!postId) {
+        document.title = 'Article Not Found | Tryumph Magazine';
+        const content = document.querySelector('.post-content');
+        if (content) content.innerHTML = '<p>No article ID specified.</p>';
         return;
     }
 
-    const computedReadTime = calculateReadingTime(article.body);
+    // Ensure we have the full articles list for related posts
+    currentArticlesList = await CMS_API.getArticles();
+    const article = await CMS_API.getArticleById(postId);
 
+    if (!article) {
+        document.title = 'Article Not Found | Tryumph Magazine';
+        const content = document.querySelector('.post-content');
+        if (content) content.innerHTML = '<p style="color:var(--color-text-muted)">Article could not be loaded. Please try again later.</p>';
+        console.error('❌ loadPostPage: no article found for id:', postId);
+        return;
+    }
+
+    console.log('✅ loadPostPage: rendering article:', article.title);
+
+    const computedReadTime = calculateReadingTime(article.body);
     document.title = `${article.title} | Tryumph Magazine`;
-    
+
     const currentBreadcrumb = document.querySelector('.breadcrumbs li:last-child');
     if (currentBreadcrumb) {
         currentBreadcrumb.textContent = article.title;
@@ -528,7 +711,7 @@ async function loadPostPage() {
     const postHeader = document.querySelector('.post-header');
     if (postHeader) {
         postHeader.querySelector('h1').textContent = article.title;
-        
+
         const tagsWrapper = postHeader.querySelector('.post-tags-container');
         if (tagsWrapper) {
             tagsWrapper.innerHTML = `
@@ -539,8 +722,9 @@ async function loadPostPage() {
 
         const heroImage = postHeader.querySelector('.post-hero-image');
         if (heroImage) {
-            heroImage.src = article.image;
+            heroImage.src = article.image || 'assets/placeholder.svg';
             heroImage.alt = article.title;
+            heroImage.onerror = () => { heroImage.src = 'assets/placeholder.svg'; };
         }
 
         const metaSpan = postHeader.querySelector('.post-meta');
@@ -557,7 +741,7 @@ async function loadPostPage() {
 
     const contentBody = document.querySelector('.post-content');
     if (contentBody) {
-        contentBody.innerHTML = article.body;
+        contentBody.innerHTML = article.body || '<p>No content available.</p>';
     }
 
     const bioWidget = document.getElementById('author-bio-widget');
@@ -566,16 +750,18 @@ async function loadPostPage() {
             <h3>Author Profile</h3>
             <div class="author-bio-card" style="margin-top: 15px;">
                 <h4 style="margin: 0; color: var(--color-primary); font-size: 1.15rem;">${article.author}</h4>
-                <p style="font-size: 0.9rem; color: var(--color-text-muted); margin: 8px 0 12px 0; line-height: 1.45;">${article.authorBio}</p>
-                <a href="${article.authorLink}" style="font-weight: 700; font-size: 0.85rem; text-transform: uppercase;">View Author Page &rarr;</a>
+                <p style="font-size: 0.9rem; color: var(--color-text-muted); margin: 8px 0 12px 0; line-height: 1.45;">${article.authorBio || 'Finance writer at Tryumph Magazine.'}</p>
+                <a href="about.html" style="font-weight: 700; font-size: 0.85rem; text-transform: uppercase;">View Author Page &rarr;</a>
             </div>
         `;
     }
 
-    loadCommentsSection(postId);
+    populateRelatedPosts(currentArticlesList, article.id);
+    loadCommentsSection(article.id);
 }
 
 async function loadCommentsSection(postId) {
+
     // Debug: ensure we have a valid postId
     console.log('🔧 loadCommentsSection called with postId:', postId);
     if (!postId) {
@@ -769,9 +955,9 @@ function loadCMSPage() {
             authorBio,
             authorLink: "about.html",
             date: dateString,
-            image: "simage/postiman.jpeg",
-            summary,
-            body
+            image: "assets/placeholder.svg",
+            summary: summary,
+            body: body
         };
 
         await CMS_API.publishArticle(newArticle);
