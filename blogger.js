@@ -9,10 +9,8 @@ const BLOGGER_CONFIG = {
     maxResults: 50
 };
 
-// SVG placeholder used when a post has no image
 const PLACEHOLDER_IMAGE = 'assets/placeholder.svg';
 
-// Helper to normalize Blogger entries into a standard Article structure
 function parseBloggerPost(entry, index) {
     const content = entry.content?.$t || '';
     const summary = entry.summary?.$t || '';
@@ -21,49 +19,41 @@ function parseBloggerPost(entry, index) {
     const firstImage = content.match(/<img[^>]+src=['"]([^'"]+)['"]/i)?.[1] || '';
     const published = entry.published?.$t || entry.updated?.$t || '';
     const author = entry.author?.[0]?.name?.$t || 'Author';
-    const alternateLink = (entry.link || []).find(link => link.rel === 'alternate')?.href || '';
 
-    // Extract a clean string ID from Blogger's tag URI
-    // e.g. "tag:blogger.com,1999:blog-12345.post-67890" -> "67890"
     let id = `blogger-${index + 1}`;
     if (entry.id?.$t) {
         const parts = entry.id.$t.split('.post-');
-        if (parts.length > 1) {
-            id = parts[1];
-        } else {
-            id = entry.id.$t;
-        }
+        id = parts.length > 1 ? parts[1] : entry.id.$t;
     }
 
     return {
-        id: id,
-        title: title,
+        id,
+        title,
         category: categories[0] || 'personal-finance',
         tags: categories,
-        author: author,
+        author,
         authorBio: '',
-        authorLink: 'about.html',   // Always open author on local site, not Blogger
+        authorLink: 'about.html',
         date: published
             ? new Date(published).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })
             : new Date().toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }),
-        image: firstImage || PLACEHOLDER_IMAGE,
+        image: firstImage ? firstImage.replace(/\/s\d+-c\//, '/s800-c/').replace(/=s\d+$/, '=s800') : PLACEHOLDER_IMAGE,
         summary: summary.replace(/<[^>]*>/g, '').trim() || content.replace(/<[^>]*>/g, '').trim().slice(0, 180),
         body: content,
-        link: ''   // Always blank – we never redirect to Blogger
+        link: ''
     };
 }
 
-// Fetch posts (optionally filtered by category/label)
 async function getBloggerPosts(label = "") {
-    // Build the proxy path – pass label filter through to the upstream URL
     const path = label
         ? `/feeds/posts/default/-/${encodeURIComponent(label)}?alt=json&max-results=${BLOGGER_CONFIG.maxResults}`
         : `/feeds/posts/default?alt=json&max-results=${BLOGGER_CONFIG.maxResults}`;
 
+    // Try direct Blogger feed
     try {
-        const proxyUrl = `http://localhost:3002${path}`;
-        const response = await fetch(proxyUrl);
-        if (!response.ok) throw new Error(`Blogger proxy error ${response.status}`);
+        const directUrl = `${BLOGGER_CONFIG.blogUrl}${path}`;
+        const response = await fetch(directUrl);
+        if (!response.ok) throw new Error(`Blogger feed error ${response.status}`);
         const data = await response.json();
         const entries = data.feed?.entry || [];
         const posts = entries.map((entry, idx) => parseBloggerPost(entry, idx));
@@ -73,7 +63,7 @@ async function getBloggerPosts(label = "") {
             return posts;
         }
     } catch (error) {
-        console.warn("Blogger proxy fetch failed, trying local fallback:", error.message);
+        console.warn("Blogger feed fetch failed, trying fallback:", error.message);
     }
 
     // Local fallback: posts.json
@@ -90,37 +80,34 @@ async function getBloggerPosts(label = "") {
                 author: p.author || 'Zikcolle',
                 authorBio: p.authorBio || '',
                 authorLink: p.authorLink || 'about.html',
-                date: p.date || 'June 22, 2026',
+                date: p.date || 'Jun 28, 2026',
                 image: p.image && !p.image.includes('postiman') ? p.image : PLACEHOLDER_IMAGE,
                 summary: p.summary || '',
                 body: p.body || '',
-                link: ''   // Never redirect to external URL
+                link: ''
             }));
-            if (label) {
-                return posts.filter(p => p.category === label);
-            }
             console.log(`📄 Local posts.json fallback: ${posts.length} posts`);
-            return posts;
+            return label ? posts.filter(p => p.category === label) : posts;
         }
     } catch (e) {
-        console.warn("Local fallback fetch failed too:", e.message);
+        console.warn("Local fallback failed:", e.message);
     }
 
     // LocalStorage cache fallback
-    const cached = localStorage.getItem('blogger_posts_cache');
-    if (cached) {
-        const posts = JSON.parse(cached);
-        console.log(`💾 Using cached posts: ${posts.length}`);
-        if (label) {
-            return posts.filter(p => p.category === label);
+    try {
+        const cached = localStorage.getItem('blogger_posts_cache');
+        if (cached) {
+            const posts = JSON.parse(cached);
+            console.log(`💾 Using cached posts: ${posts.length}`);
+            return label ? posts.filter(p => p.category === label) : posts;
         }
-        return posts;
+    } catch (e) {
+        console.warn("Cache read failed:", e.message);
     }
 
     return [];
 }
 
-// Fetch single post by ID
 async function getBloggerPostById(postId) {
     const posts = await getBloggerPosts();
     return posts.find(p => String(p.id) === String(postId)) || null;

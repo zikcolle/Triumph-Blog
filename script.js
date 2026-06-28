@@ -140,8 +140,8 @@ const CMS_API = {
         }
 
         try {
-            const proxyUrl = 'http://localhost:3002';
-        const response = await fetch(proxyUrl);
+            const directUrl = BLOGGER_CONFIG.feedUrl;
+            const response = await fetch(directUrl);
             if (!response.ok) {
                 throw new Error(`Blogger feed returned ${response.status}`);
             }
@@ -537,7 +537,9 @@ function renderFilteredArticles() {
 
     displayList.forEach(article => {
         const readTime = calculateReadingTime(article.body || article.summary);
-        const tagHTML = article.tags.map(t => `<span class="tag-pill">${t}</span>`).join('');
+        const tagHTML = article.tags.map(t =>
+    `<a href="blog.html?cat=${encodeURIComponent(t)}" class="tag-pill">${t}</a>`
+).join('');
         
         const cardHTML = `
             <div class="blog-post" data-category="${article.category}">
@@ -577,7 +579,9 @@ async function loadHomePage() {
     
     if (featured && featPostContainer) {
         const readTime = calculateReadingTime(featured.body || featured.summary);
-        const tags = featured.tags.map(t => `<span class="tag-pill">${t}</span>`).join('');
+        const tags = featured.tags.map(t =>
+    `<a href="blog.html?cat=${encodeURIComponent(t)}" class="tag-pill">${t}</a>`
+).join('');
         
         featPostContainer.setAttribute('data-category', featured.category);
         featPostContainer.innerHTML = `
@@ -659,16 +663,50 @@ function renderExploreByCategory(articles) {
 }
 
 async function loadBlogPage() {
-    currentArticlesList = await CMS_API.getArticles();
+    const urlParams = new URLSearchParams(window.location.search);
+    const label = urlParams.get('cat') || '';
+
+    // Update heading
+    const labelHeading = document.getElementById('post-label');
+    if (labelHeading) {
+        labelHeading.textContent = label
+            ? label.charAt(0).toUpperCase() + label.slice(1).replace(/-/g, ' ')
+            : 'Latest Briefings';
+    }
+
+    // Fetch all posts then filter client-side
+    const allArticles = await CMS_API.getArticles();
+    currentArticlesList = label
+        ? allArticles.filter(a => a.category === label || a.tags.includes(label))
+        : allArticles;
+
     console.log('🟢 Blog page loaded articles count:', currentArticlesList.length);
+
+    // Render tag cloud
+    const allTags = [...new Set(allArticles.flatMap(a => a.tags))].filter(Boolean);
+    const tagCloud = document.getElementById('tag-cloud');
+    if (tagCloud) {
+        tagCloud.innerHTML =
+            `<a href="blog.html" class="tag-pill ${!label ? 'active' : ''}">All</a>` +
+            allTags.map(tag =>
+                `<a href="blog.html?cat=${encodeURIComponent(tag)}" class="tag-pill ${tag === label ? 'active' : ''}">${tag}</a>`
+            ).join('');
+    }
+
     renderFilteredArticles();
-    // Populate related posts grid at the bottom of the blog page
-    populateRelatedPosts(currentArticlesList);
-    
+    populateRelatedPosts(allArticles);
+
+    // Search
     const blogSearch = document.getElementById('blog-search-input');
     if (blogSearch) {
         blogSearch.addEventListener('input', (e) => {
-            runSearch(e.target.value);
+            const q = e.target.value.toLowerCase().trim();
+            currentArticlesList = allArticles.filter(a =>
+                a.title.toLowerCase().includes(q) ||
+                a.summary.toLowerCase().includes(q) ||
+                a.tags.some(t => t.toLowerCase().includes(q))
+            );
+            renderFilteredArticles();
         });
     }
 }
