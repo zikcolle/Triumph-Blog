@@ -66,48 +66,6 @@ async function getBloggerPosts(label = "") {
         console.warn("Blogger feed fetch failed, trying fallback:", error.message);
     }
 
-    // Local fallback: posts.json
-    try {
-        const response = await fetch('posts.json');
-        if (response.ok) {
-            const data = await response.json();
-            const rawPosts = data.articles || data;
-            const posts = rawPosts.map((p, idx) => ({
-                id: p.id || `local-${idx}`,
-                title: p.title || '',
-                category: p.category || 'personal-finance',
-                tags: Array.isArray(p.tags) ? p.tags : [],
-                author: p.author || 'Zikcolle',
-                authorBio: p.authorBio || '',
-                authorLink: p.authorLink || 'about.html',
-                date: p.date || 'Jun 28, 2026',
-                image: p.image && !p.image.includes('postiman') ? p.image : PLACEHOLDER_IMAGE,
-                summary: p.summary || '',
-                body: p.body || '',
-                link: ''
-            }));
-            console.log(`📄 Local posts.json fallback: ${posts.length} posts`);
-            return label ? posts.filter(p => p.category === label) : posts;
-        }
-    } catch (e) {
-        console.warn("Local fallback failed:", e.message);
-    }
-
-    // LocalStorage cache fallback
-    try {
-        const cached = localStorage.getItem('blogger_posts_cache');
-        if (cached) {
-            const posts = JSON.parse(cached);
-            console.log(`💾 Using cached posts: ${posts.length}`);
-            return label ? posts.filter(p => p.category === label) : posts;
-        }
-    } catch (e) {
-        console.warn("Cache read failed:", e.message);
-    }
-
-    return [];
-}
-
 async function getBloggerPostById(postId) {
     const posts = await getBloggerPosts();
     return posts.find(p => String(p.id) === String(postId)) || null;
