@@ -5,7 +5,8 @@
 const BLOGGER_CONFIG = {
     blogId: "tryumphmagazine",
     blogUrl: "https://tryumphmagazine.blogspot.com",
-    feedUrl: "https://tryumphmagazine.blogspot.com/feeds/posts/default?alt=json",
+    // 1. Change feedUrl to use a relative path for the Vercel rewrite engine
+    feedUrl: "/feeds/posts/default",
     maxResults: 500
 };
 
@@ -45,14 +46,15 @@ function parseBloggerPost(entry, index) {
 }
 
 async function getBloggerPosts(label = "") {
+    // 2. Build paths relatively to use Vercel's server rewrites
     const path = label
-        ? `/feeds/posts/default/-/${encodeURIComponent(label)}?alt=json&max-results=${BLOGGER_CONFIG.maxResults}`
-        : `/feeds/posts/default?alt=json&max-results=${BLOGGER_CONFIG.maxResults}`;
+        ? `/feeds/posts/default/-/${encodeURIComponent(label)}?max-results=${BLOGGER_CONFIG.maxResults}`
+        : `/feeds/posts/default?max-results=${BLOGGER_CONFIG.maxResults}`;
 
-    // Try direct Blogger feed
     try {
-        const directUrl = `${BLOGGER_CONFIG.blogUrl}${path}`;
-        const response = await fetch(directUrl);
+        // This will now request 'https://vercel.app...'
+        // Vercel intercepts this request, grabs the blogger feed, and returns it bypass-CORS.
+        const response = await fetch(path); 
         if (!response.ok) throw new Error(`Blogger feed error ${response.status}`);
         const data = await response.json();
         const entries = data.feed?.entry || [];
@@ -81,7 +83,8 @@ async function getBloggerPosts(label = "") {
                 authorBio: p.authorBio || '',
                 authorLink: p.authorLink || 'about.html',
                 date: p.date || 'Jun 28, 2026',
-                image: p.image && !p.image.includes('postiman') ? p.image : PLACEHOLDER_IMAGE,
+                // 3. Removed the restriction blocking your 'postiman' image file path string
+                image: p.image ? p.image : PLACEHOLDER_IMAGE, 
                 summary: p.summary || '',
                 body: p.body || '',
                 link: ''

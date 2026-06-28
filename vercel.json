@@ -1,0 +1,12 @@
+{
+  "rewrites": [
+    {
+      "source": "/feeds/posts/default",
+      "destination": "https://tryumphmagazine.blogspot.com/feeds/posts/default?alt=json"
+    },
+    {
+      "source": "/feeds/posts/default/-/:label",
+      "destination": "https://blogspot.com"
+    }
+  ]
+}
