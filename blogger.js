@@ -6,7 +6,7 @@ const BLOGGER_CONFIG = {
     blogId: "tryumphmagazine",
     blogUrl: "https://tryumphmagazine.blogspot.com",
     feedUrl: "https://tryumphmagazine.blogspot.com/feeds/posts/default?alt=json",
-    maxResults: 50
+    maxResults: 500
 };
 
 const PLACEHOLDER_IMAGE = 'assets/placeholder.svg';
