@@ -8,8 +8,7 @@
     },
     {
       "source": "/feeds/posts/default/-/:label",
-      "destination": "https://blogspot.com"
+      "destination": "https://blogspot.com/-/:label"
     }
   ]
 }
-
