@@ -48,8 +48,9 @@ function parseBloggerPost(entry, index) {
 async function getBloggerPosts(label = "") {
     // 2. Build paths relatively to use Vercel's server rewrites
     const path = label
-        ? `/feeds/posts/default/-/${encodeURIComponent(label)}?max-results=${BLOGGER_CONFIG.maxResults}`
-        : `/feeds/posts/default?max-results=${BLOGGER_CONFIG.maxResults}`;
+    ? `/feeds/posts/default/-/${encodeURIComponent(label)}?max-results=${BLOGGER_CONFIG.maxResults}`
+    : `/feeds/posts/default?max-results=${BLOGGER_CONFIG.maxResults}`;
+
 
     try {
         // This will now request 'https://vercel.app...'
