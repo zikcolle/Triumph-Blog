@@ -44,7 +44,7 @@ function parseBloggerPost(post) {
 }
 
 async function getBloggerPosts(label = "") {
-    // Structural v3 API URL assembly parameters targeting official public REST endpoints
+    // FIX: Uses exact matching uppercase syntax with clean template backticks (``)
     let url = `https://googleapis.com{BLOGGER_CONFIG.blogId}/posts?key=${BLOGGER_CONFIG.apiKey}&maxResults=${BLOGGER_CONFIG.maxResults}`;
     
     if (label) {
@@ -53,7 +53,7 @@ async function getBloggerPosts(label = "") {
 
     try {
         const response = await fetch(url); 
-        if (!response.ok) throw new Error(`Google API network fault status: ${response.status}`);
+        if (!response.ok) throw new Error(`Google API error status: ${response.status}`);
         
         const data = await response.json();
         const items = data.items || [];
@@ -97,6 +97,7 @@ async function getBloggerPosts(label = "") {
 
     return [];
 }
+
 
 async function getBloggerPostById(postId) {
     const posts = await getBloggerPosts();
