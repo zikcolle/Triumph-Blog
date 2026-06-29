@@ -1,3 +1,37 @@
+// Dynamic Clean URLs: Strips extensions live on Vercel, keeps them safe locally
+(function() {
+    const isLocal = window.location.hostname === 'localhost' || 
+                    window.location.hostname === '127.0.0.1' || 
+                    window.location.protocol === 'file:';
+
+    if (!isLocal) {
+        // 1. If someone lands on /index.html live, strip it to a clean domain root
+        if (window.location.pathname.endsWith('/index.html') || window.location.pathname === '/index') {
+            window.history.replaceState(null, '', '/' + window.location.search);
+        } 
+        // 2. Strip any trailing .html extensions from other subpages (like /about.html -> /about)
+        else if (window.location.pathname.endsWith('.html')) {
+            const cleanPath = window.location.pathname.replace(/\.html$/, '');
+            window.history.replaceState(null, '', cleanPath + window.location.search);
+        }
+
+        // 3. Update all your navigation links on the fly so users don't see .html in preview anchors
+        document.addEventListener("DOMContentLoaded", () => {
+            document.querySelectorAll("a[href]").forEach(link => {
+                let href = link.getAttribute("href");
+                if (href && !href.startsWith("http") && !href.startsWith("#")) {
+                    if (href === "index.html" || href === "index") {
+                        link.setAttribute("href", "/" + window.location.search);
+                    } else {
+                        link.setAttribute("href", href.replace(/\.html/, ""));
+                    }
+                }
+            });
+        });
+    }
+})();
+
+
 /**
  * TRYUMPH MAGAZINE - DYNAMIC ENGINE & CMS API CONNECTOR
  */

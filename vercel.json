@@ -1,8 +1,9 @@
 {
+  "cleanUrls": true,
   "rewrites": [
     {
       "source": "/feeds/posts/default",
-      "destination": "https://tryumphmagazine.blogspot.com/feeds/posts/default?alt=json"
+      "destination": "https://blogspot.com"
     },
     {
       "source": "/feeds/posts/default/-/:label",
