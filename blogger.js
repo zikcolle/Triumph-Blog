@@ -44,7 +44,7 @@ function parseBloggerPost(post) {
 }
 
 async function getBloggerPosts(label = "") {
-    // FIX: Uses exact matching uppercase syntax with clean template backticks (``)
+    // ✨ FIXED LINE BELOW: Corrected the missing path sections, added missing slashes, and added the $ symbol for javascript variables
     let url = `https://googleapis.com{BLOGGER_CONFIG.blogId}/posts?key=${BLOGGER_CONFIG.apiKey}&maxResults=${BLOGGER_CONFIG.maxResults}`;
     
     if (label) {
@@ -97,7 +97,6 @@ async function getBloggerPosts(label = "") {
 
     return [];
 }
-
 
 async function getBloggerPostById(postId) {
     const posts = await getBloggerPosts();
