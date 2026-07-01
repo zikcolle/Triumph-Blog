@@ -1,36 +1,39 @@
 // Dynamic Clean URLs: Strips extensions live on Vercel, keeps them safe locally
-(function() {
-    const isLocal = window.location.hostname === 'localhost' || 
-                    window.location.hostname === '127.0.0.1' || 
-                    window.location.protocol === 'file:';
+(function () {
+  const isLocal =
+    window.location.hostname === "localhost" ||
+    window.location.hostname === "127.0.0.1" ||
+    window.location.protocol === "file:";
 
-    if (!isLocal) {
-        // 1. If someone lands on /index.html live, strip it to a clean domain root
-        if (window.location.pathname.endsWith('/index.html') || window.location.pathname === '/index') {
-            window.history.replaceState(null, '', '/' + window.location.search);
-        } 
-        // 2. Strip any trailing .html extensions from other subpages (like /about.html -> /about)
-        else if (window.location.pathname.endsWith('.html')) {
-            const cleanPath = window.location.pathname.replace(/\.html$/, '');
-            window.history.replaceState(null, '', cleanPath + window.location.search);
-        }
-
-        // 3. Update all your navigation links on the fly so users don't see .html in preview anchors
-        document.addEventListener("DOMContentLoaded", () => {
-            document.querySelectorAll("a[href]").forEach(link => {
-                let href = link.getAttribute("href");
-                if (href && !href.startsWith("http") && !href.startsWith("#")) {
-                    if (href === "index.html" || href === "index") {
-                        link.setAttribute("href", "/" + window.location.search);
-                    } else {
-                        link.setAttribute("href", href.replace(/\.html/, ""));
-                    }
-                }
-            });
-        });
+  if (!isLocal) {
+    // 1. If someone lands on /index.html live, strip it to a clean domain root
+    if (
+      window.location.pathname.endsWith("/index.html") ||
+      window.location.pathname === "/index"
+    ) {
+      window.history.replaceState(null, "", "/" + window.location.search);
     }
-})();
+    // 2. Strip any trailing .html extensions from other subpages (like /about.html -> /about)
+    else if (window.location.pathname.endsWith(".html")) {
+      const cleanPath = window.location.pathname.replace(/\.html$/, "");
+      window.history.replaceState(null, "", cleanPath + window.location.search);
+    }
 
+    // 3. Update all your navigation links on the fly so users don't see .html in preview anchors
+    document.addEventListener("DOMContentLoaded", () => {
+      document.querySelectorAll("a[href]").forEach((link) => {
+        let href = link.getAttribute("href");
+        if (href && !href.startsWith("http") && !href.startsWith("#")) {
+          if (href === "index.html" || href === "index") {
+            link.setAttribute("href", "/");
+          } else {
+            link.setAttribute("href", href.replace(/\.html/, ""));
+          }
+        }
+      });
+    });
+  }
+})();
 
 /**
  * TRYUMPH MAGAZINE - DYNAMIC ENGINE & CMS API CONNECTOR
@@ -39,19 +42,20 @@
 // ==========================================================================
 // SUPABASE CONFIGURATION HEADERS
 // ==========================================================================
-// Input your credentials below. If left empty, the comments system will 
+// Input your credentials below. If left empty, the comments system will
 // automatically fall back to local storage (safe for offline testing).
 const SUPABASE_CONFIG = {
-    url: "https://isxjekzmqquxipahaack.supabase.co",      // Paste your Supabase Project URL here (e.g. https://xxxx.supabase.co)
-    anonKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlzeGpla3ptcXF1eGlwYWhhYWNrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIzMDgzMTUsImV4cCI6MjA5Nzg4NDMxNX0.lJNmujk6NfEQG-tloi39Qj_w5saVTw1jwBdgANU44mQ",  // Paste your Supabase Public Anon Key here
-    notificationWebhookUrl: "" // Optional: Webhook URL (e.g. Zapier/Make) to trigger email alerts on replies
+  url: "https://isxjekzmqquxipahaack.supabase.co", // Paste your Supabase Project URL here (e.g. https://xxxx.supabase.co)
+  anonKey:
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlzeGpla3ptcXF1eGlwYWhhYWNrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIzMDgzMTUsImV4cCI6MjA5Nzg4NDMxNX0.lJNmujk6NfEQG-tloi39Qj_w5saVTw1jwBdgANU44mQ", // Paste your Supabase Public Anon Key here
+  notificationWebhookUrl: "", // Optional: Webhook URL (e.g. Zapier/Make) to trigger email alerts on replies
 };
 
 // Optional Blogger integration. If you set either a feed URL or blog ID,
 // the site will try to pull posts from Blogger before falling back to Supabase/local content.
 // Duplicate BLOGGER_CONFIG removed; using config from blogger.js
 
-/* 
+/*
  * SQL schema to create the 'comments' table in your Supabase SQL Editor:
  *
  * create table comments (
@@ -62,40 +66,40 @@ const SUPABASE_CONFIG = {
  *   date text not null,
  *   created_at timestamp with time zone default timezone('utc'::text, now()) not null
  * );
- * 
- * Make sure to enable Row Level Security (RLS) and create a policy 
+ *
+ * Make sure to enable Row Level Security (RLS) and create a policy
  * allowing public insert and read access so users can comment.
  */
 
 // Mobile Navigation Toggle
 function toggleMenu() {
-    const menu = document.querySelector('nav ul');
-    const button = document.querySelector('.menu-toggle');
-    if (menu && button) {
-        menu.classList.toggle('active');
-        button.classList.toggle('active');
-    }
+  const menu = document.querySelector("nav ul");
+  const button = document.querySelector(".menu-toggle");
+  if (menu && button) {
+    menu.classList.toggle("active");
+    button.classList.toggle("active");
+  }
 }
 
 // Close Mobile Navigation
 function closeMenu() {
-    const menu = document.querySelector('nav ul');
-    const button = document.querySelector('.menu-toggle');
-    if (menu && button) {
-        menu.classList.remove('active');
-        button.classList.remove('active');
-    }
+  const menu = document.querySelector("nav ul");
+  const button = document.querySelector(".menu-toggle");
+  if (menu && button) {
+    menu.classList.remove("active");
+    button.classList.remove("active");
+  }
 }
 
 // Toggle Dropdown on Mobile click
 function toggleMobileDropdown(event) {
-    if (window.innerWidth <= 768) {
-        event.preventDefault();
-        const parent = event.target.closest('.dropdown');
-        if (parent) {
-            parent.classList.toggle('open');
-        }
+  if (window.innerWidth <= 768) {
+    event.preventDefault();
+    const parent = event.target.closest(".dropdown");
+    if (parent) {
+      parent.classList.toggle("open");
     }
+  }
 }
 
 // ==========================================================================
@@ -105,327 +109,411 @@ const SUN_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" 
 const MOON_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path></svg>`;
 
 function initTheme() {
-    const savedTheme = localStorage.getItem('triumph_theme') || 'light';
-    document.documentElement.setAttribute('data-theme', savedTheme);
-    updateThemeIcon(savedTheme);
+  const savedTheme = localStorage.getItem("triumph_theme") || "light";
+  document.documentElement.setAttribute("data-theme", savedTheme);
+  updateThemeIcon(savedTheme);
 }
 
 function toggleTheme() {
-    const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
-    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-    document.documentElement.setAttribute('data-theme', newTheme);
-    localStorage.setItem('triumph_theme', newTheme);
-    updateThemeIcon(newTheme);
+  const currentTheme =
+    document.documentElement.getAttribute("data-theme") || "light";
+  const newTheme = currentTheme === "light" ? "dark" : "light";
+  document.documentElement.setAttribute("data-theme", newTheme);
+  localStorage.setItem("triumph_theme", newTheme);
+  updateThemeIcon(newTheme);
 }
 
 function updateThemeIcon(theme) {
-    const themeBtn = document.getElementById('theme-toggle-btn');
-    if (themeBtn) {
-        if (theme === 'dark') {
-            themeBtn.innerHTML = SUN_SVG;
-            themeBtn.setAttribute('title', 'Switch to Light Mode');
-        } else {
-            themeBtn.innerHTML = MOON_SVG;
-            themeBtn.setAttribute('title', 'Switch to Dark Mode');
-        }
+  const themeBtn = document.getElementById("theme-toggle-btn");
+  if (themeBtn) {
+    if (theme === "dark") {
+      themeBtn.innerHTML = SUN_SVG;
+      themeBtn.setAttribute("title", "Switch to Light Mode");
+    } else {
+      themeBtn.innerHTML = MOON_SVG;
+      themeBtn.setAttribute("title", "Switch to Dark Mode");
     }
+  }
 }
 
 // ==========================================================================
 // CMS DATA LAYER (Supabase-backed article storage with local fallback)
 // ==========================================================================
 const CMS_API = {
-    defaultArticles: [],
+  defaultArticles: [],
 
-    getStorageKey() {
-        return 'triumph_articles';
-    },
+  getStorageKey() {
+    return "triumph_articles";
+  },
 
-    normalizeArticle(article = {}) {
-        const tags = Array.isArray(article.tags)
-            ? article.tags
-            : (article.tags ? String(article.tags).split(',').map(tag => tag.trim()).filter(Boolean) : []);
+  normalizeArticle(article = {}) {
+    const tags = Array.isArray(article.tags)
+      ? article.tags
+      : article.tags
+        ? String(article.tags)
+            .split(",")
+            .map((tag) => tag.trim())
+            .filter(Boolean)
+        : [];
 
-        // Never use the old broken path; fall back to the local SVG placeholder
-        const rawImage = article.image || '';
-        const image = (rawImage && !rawImage.includes('postiman')) ? rawImage : 'assets/placeholder.svg';
+    // Never use the old broken path; fall back to the local SVG placeholder
+    const rawImage = article.image || "";
+    const image =
+      rawImage && !rawImage.includes("postiman")
+        ? rawImage
+        : "assets/placeholder.svg";
 
-        return {
-            id: article.id || `post_${Date.now()}`,
-            title: article.title || '',
-            category: article.category || 'personal-finance',
-            tags,
-            author: article.author || 'Zikcolle',
-            authorBio: article.authorBio || article.author_bio || '',
-            authorLink: article.authorLink || article.author_link || 'about.html',
-            date: article.date || new Date().toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }),
-            image,
-            summary: article.summary || '',
-            body: article.body || '',
-            link: ''   // Never redirect to external URL
-        };
-    },
+    return {
+      id: article.id || `post_${Date.now()}`,
+      title: article.title || "",
+      category: article.category || "personal-finance",
+      tags,
+      author: article.author || "Zikcolle",
+      authorBio: article.authorBio || article.author_bio || "",
+      authorLink: article.authorLink || article.author_link || "about.html",
+      date:
+        article.date ||
+        new Date().toLocaleDateString(undefined, {
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+        }),
+      image,
+      summary: article.summary || "",
+      body: article.body || "",
+      link: "", // Never redirect to external URL
+    };
+  },
 
-    async getBloggerArticles() {
-        const feedUrl = BLOGGER_CONFIG.feedUrl || (BLOGGER_CONFIG.blogId ? `https://www.blogger.com/feeds/${BLOGGER_CONFIG.blogId}/posts/default?alt=json&max-results=${BLOGGER_CONFIG.maxResults}` : '');
+  async getBloggerArticles() {
+    const feedUrl =
+      BLOGGER_CONFIG.feedUrl ||
+      (BLOGGER_CONFIG.blogId
+        ? `https://www.blogger.com/feeds/${BLOGGER_CONFIG.blogId}/posts/default?alt=json&max-results=${BLOGGER_CONFIG.maxResults}`
+        : "");
 
-        if (!feedUrl) {
-            return null;
-        }
-
-        try {
-            const directUrl = BLOGGER_CONFIG.feedUrl;
-            const response = await fetch(directUrl);
-            if (!response.ok) {
-                throw new Error(`Blogger feed returned ${response.status}`);
-            }
-
-            const data = await response.json();
-            console.log('🟢 Blogger feed data fetched:', data);
-            const entries = Array.isArray(data?.feed?.entry) ? data.feed.entry : [];
-            if (!entries.length) {
-                return [];
-            }
-
-            const articles = entries.map((entry, index) => {
-                const content = entry.content?.$t || '';
-                const summary = entry.summary?.$t || '';
-                const title = entry.title?.$t || 'Untitled Post';
-                const categories = (entry.category || []).map(item => item.term).filter(Boolean);
-                const firstImage = content.match(/<img[^>]+src=['"]([^'"]+)['"]/i)?.[1] || '';
-                const published = entry.published?.$t || entry.updated?.$t || '';
-                const author = entry.author?.[0]?.name?.$t || 'Author';
-                const alternateLink = (entry.link || []).find(link => link.rel === 'alternate')?.href || '';
-
-                return this.normalizeArticle({
-                    id: entry.id?.$t || `blogger-${index + 1}`,
-                    title,
-                    category: categories[0] || 'personal-finance',
-                    tags: categories,
-                    author,
-                    authorBio: '',
-                    authorLink: alternateLink || 'about.html',
-                    date: published ? new Date(published).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }) : new Date().toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }),
-                    image: firstImage || 'simage/postiman.jpeg',
-                    summary: summary.replace(/<[^>]*>/g, '').trim() || content.replace(/<[^>]*>/g, '').trim().slice(0, 180),
-                    body: content,
-                    link: alternateLink
-                });
-            });
-
-            return articles.sort((a, b) => new Date(b.date) - new Date(a.date));
-        } catch (e) {
-            console.warn('Blogger feed unavailable. Falling back to other sources.', e);
-            return null;
-        }
-    },
-
-    async getArticles() {
-        if (typeof getBloggerPosts === 'function') {
-            return await getBloggerPosts();
-        }
-        // Attempt to fetch articles from Blogger feed first
-        const bloggerArticles = await this.getBloggerArticles();
-        if (Array.isArray(bloggerArticles) && bloggerArticles.length > 0) {
-            localStorage.setItem(this.getStorageKey(), JSON.stringify(bloggerArticles));
-            return bloggerArticles;
-        }
-        // Fallback: fetch static posts.json
-        try {
-            const response = await fetch('posts.json');
-            if (response.ok) {
-                const data = await response.json();
-                const articles = (data.articles ? data.articles : data).map(article => this.normalizeArticle(article));
-                localStorage.setItem(this.getStorageKey(), JSON.stringify(articles));
-                return articles;
-            }
-        } catch (e) {
-            console.warn('Failed to load local posts.json fallback.', e);
-        }
-        // Return stored articles if any
-        const stored = JSON.parse(localStorage.getItem(this.getStorageKey()) || 'null');
-        if (Array.isArray(stored) && stored.length > 0) {
-            return stored.map(article => this.normalizeArticle(article));
-        }
-        // Default fallback to built‑in articles
-        localStorage.setItem(this.getStorageKey(), JSON.stringify(this.defaultArticles));
-        return this.defaultArticles;
-    },
-
-    async getArticleById(id) {
-        if (typeof getBloggerPostById === 'function') {
-            return await getBloggerPostById(id);
-        }
-        const articles = await this.getArticles();
-        return articles.find(article => String(article.id) === String(id));
-    },
-
-    async publishArticle(article) {
-        const normalizedArticle = this.normalizeArticle(article);
-
-        try {
-            if (SUPABASE_CONFIG.url && SUPABASE_CONFIG.anonKey) {
-                const url = `${SUPABASE_CONFIG.url}/rest/v1/articles?select=*`;
-                const response = await fetch(url, {
-                    method: 'POST',
-                    headers: {
-                        'apikey': SUPABASE_CONFIG.anonKey,
-                        'Authorization': `Bearer ${SUPABASE_CONFIG.anonKey}`,
-                        'Content-Type': 'application/json',
-                        'Prefer': 'return=representation'
-                    },
-                    body: JSON.stringify({
-                        id: normalizedArticle.id,
-                        title: normalizedArticle.title,
-                        category: normalizedArticle.category,
-                        tags: normalizedArticle.tags,
-                        author: normalizedArticle.author,
-                        authorBio: normalizedArticle.authorBio,
-                        authorLink: normalizedArticle.authorLink,
-                        date: normalizedArticle.date,
-                        image: normalizedArticle.image,
-                        summary: normalizedArticle.summary,
-                        body: normalizedArticle.body
-                    })
-                });
-
-                if (response.ok) {
-                    const createdArticle = await response.json();
-                    const existingArticles = await this.getArticles();
-                    const updatedArticles = [this.normalizeArticle(createdArticle[0] || normalizedArticle), ...existingArticles.filter(existing => String(existing.id) !== String(normalizedArticle.id))];
-                    localStorage.setItem(this.getStorageKey(), JSON.stringify(updatedArticles));
-                    return true;
-                }
-            }
-        } catch (e) {
-            console.error('Supabase article save failed. Falling back to local storage.', e);
-        }
-
-        const existingArticles = await this.getArticles();
-        const updatedArticles = [normalizedArticle, ...existingArticles.filter(existing => String(existing.id) !== String(normalizedArticle.id))];
-        localStorage.setItem(this.getStorageKey(), JSON.stringify(updatedArticles));
-        return true;
+    if (!feedUrl) {
+      return null;
     }
+
+    try {
+      const directUrl = BLOGGER_CONFIG.feedUrl;
+      const response = await fetch(directUrl);
+      if (!response.ok) {
+        throw new Error(`Blogger feed returned ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log("🟢 Blogger feed data fetched:", data);
+      const entries = Array.isArray(data?.feed?.entry) ? data.feed.entry : [];
+      if (!entries.length) {
+        return [];
+      }
+
+      const articles = entries.map((entry, index) => {
+        const content = entry.content?.$t || "";
+        const summary = entry.summary?.$t || "";
+        const title = entry.title?.$t || "Untitled Post";
+        const categories = (entry.category || [])
+          .map((item) => item.term)
+          .filter(Boolean);
+        const firstImage =
+          content.match(/<img[^>]+src=['"]([^'"]+)['"]/i)?.[1] || "";
+        const published = entry.published?.$t || entry.updated?.$t || "";
+        const author = entry.author?.[0]?.name?.$t || "Author";
+        const alternateLink =
+          (entry.link || []).find((link) => link.rel === "alternate")?.href ||
+          "";
+
+        return this.normalizeArticle({
+          id: entry.id?.$t || `blogger-${index + 1}`,
+          title,
+          category: categories[0] || "personal-finance",
+          tags: categories,
+          author,
+          authorBio: "",
+          authorLink: alternateLink || "about.html",
+          date: published
+            ? new Date(published).toLocaleDateString(undefined, {
+                month: "short",
+                day: "numeric",
+                year: "numeric",
+              })
+            : new Date().toLocaleDateString(undefined, {
+                month: "short",
+                day: "numeric",
+                year: "numeric",
+              }),
+          image: firstImage || "simage/postiman.jpeg",
+          summary:
+            summary.replace(/<[^>]*>/g, "").trim() ||
+            content
+              .replace(/<[^>]*>/g, "")
+              .trim()
+              .slice(0, 180),
+          body: content,
+          link: alternateLink,
+        });
+      });
+
+      return articles.sort((a, b) => new Date(b.date) - new Date(a.date));
+    } catch (e) {
+      console.warn(
+        "Blogger feed unavailable. Falling back to other sources.",
+        e,
+      );
+      return null;
+    }
+  },
+
+  async getArticles() {
+    if (typeof getBloggerPosts === "function") {
+      return await getBloggerPosts();
+    }
+    // Attempt to fetch articles from Blogger feed first
+    const bloggerArticles = await this.getBloggerArticles();
+    if (Array.isArray(bloggerArticles) && bloggerArticles.length > 0) {
+      localStorage.setItem(
+        this.getStorageKey(),
+        JSON.stringify(bloggerArticles),
+      );
+      return bloggerArticles;
+    }
+    // Fallback: fetch static posts.json
+    try {
+      const response = await fetch("posts.json");
+      if (response.ok) {
+        const data = await response.json();
+        const articles = (data.articles ? data.articles : data).map((article) =>
+          this.normalizeArticle(article),
+        );
+        localStorage.setItem(this.getStorageKey(), JSON.stringify(articles));
+        return articles;
+      }
+    } catch (e) {
+      console.warn("Failed to load local posts.json fallback.", e);
+    }
+    // Return stored articles if any
+    const stored = JSON.parse(
+      localStorage.getItem(this.getStorageKey()) || "null",
+    );
+    if (Array.isArray(stored) && stored.length > 0) {
+      return stored.map((article) => this.normalizeArticle(article));
+    }
+    // Default fallback to built‑in articles
+    localStorage.setItem(
+      this.getStorageKey(),
+      JSON.stringify(this.defaultArticles),
+    );
+    return this.defaultArticles;
+  },
+
+  async getArticleById(id) {
+    if (typeof getBloggerPostById === "function") {
+      return await getBloggerPostById(id);
+    }
+    const articles = await this.getArticles();
+    return articles.find((article) => String(article.id) === String(id));
+  },
+
+  async publishArticle(article) {
+    const normalizedArticle = this.normalizeArticle(article);
+
+    try {
+      if (SUPABASE_CONFIG.url && SUPABASE_CONFIG.anonKey) {
+        const url = `${SUPABASE_CONFIG.url}/rest/v1/articles?select=*`;
+        const response = await fetch(url, {
+          method: "POST",
+          headers: {
+            apikey: SUPABASE_CONFIG.anonKey,
+            Authorization: `Bearer ${SUPABASE_CONFIG.anonKey}`,
+            "Content-Type": "application/json",
+            Prefer: "return=representation",
+          },
+          body: JSON.stringify({
+            id: normalizedArticle.id,
+            title: normalizedArticle.title,
+            category: normalizedArticle.category,
+            tags: normalizedArticle.tags,
+            author: normalizedArticle.author,
+            authorBio: normalizedArticle.authorBio,
+            authorLink: normalizedArticle.authorLink,
+            date: normalizedArticle.date,
+            image: normalizedArticle.image,
+            summary: normalizedArticle.summary,
+            body: normalizedArticle.body,
+          }),
+        });
+
+        if (response.ok) {
+          const createdArticle = await response.json();
+          const existingArticles = await this.getArticles();
+          const updatedArticles = [
+            this.normalizeArticle(createdArticle[0] || normalizedArticle),
+            ...existingArticles.filter(
+              (existing) =>
+                String(existing.id) !== String(normalizedArticle.id),
+            ),
+          ];
+          localStorage.setItem(
+            this.getStorageKey(),
+            JSON.stringify(updatedArticles),
+          );
+          return true;
+        }
+      }
+    } catch (e) {
+      console.error(
+        "Supabase article save failed. Falling back to local storage.",
+        e,
+      );
+    }
+
+    const existingArticles = await this.getArticles();
+    const updatedArticles = [
+      normalizedArticle,
+      ...existingArticles.filter(
+        (existing) => String(existing.id) !== String(normalizedArticle.id),
+      ),
+    ];
+    localStorage.setItem(this.getStorageKey(), JSON.stringify(updatedArticles));
+    return true;
+  },
 };
 
 // ==========================================================================
 // SUPABASE / LOCALSTORAGE HYBRID COMMENT ENGINE
 // ==========================================================================
 const COMMENTS_API = {
-    async getComments(postId) {
-        if (SUPABASE_CONFIG.url && SUPABASE_CONFIG.anonKey) {
-            try {
-                const url = `${SUPABASE_CONFIG.url}/rest/v1/comments?post_id=eq.${encodeURIComponent(postId)}&select=*`;
-                const response = await fetch(url, {
-                    method: 'GET',
-                    headers: {
-                        'apikey': SUPABASE_CONFIG.anonKey,
-                        'Authorization': `Bearer ${SUPABASE_CONFIG.anonKey}`
-                    }
-                });
-                if (response.ok) {
-                    return await response.json();
-                } else {
-                    const errBody = await response.text();
-                    console.error(`Supabase error fetching comments (status ${response.status}):`, errBody);
-                }
-            } catch (e) {
-                console.error("Failed to connect to Supabase database. Falling back to local storage comments.", e);
-            }
+  async getComments(postId) {
+    if (SUPABASE_CONFIG.url && SUPABASE_CONFIG.anonKey) {
+      try {
+        const url = `${SUPABASE_CONFIG.url}/rest/v1/comments?post_id=eq.${encodeURIComponent(postId)}&select=*`;
+        const response = await fetch(url, {
+          method: "GET",
+          headers: {
+            apikey: SUPABASE_CONFIG.anonKey,
+            Authorization: `Bearer ${SUPABASE_CONFIG.anonKey}`,
+          },
+        });
+        if (response.ok) {
+          return await response.json();
+        } else {
+          const errBody = await response.text();
+          console.error(
+            `Supabase error fetching comments (status ${response.status}):`,
+            errBody,
+          );
         }
-
-        // LocalStorage Fallback
-        return JSON.parse(localStorage.getItem(`comments_${postId}`)) || [];
-    },
-
-    async addComment(postId, comment) {
-        if (SUPABASE_CONFIG.url && SUPABASE_CONFIG.anonKey) {
-            try {
-                const url = `${SUPABASE_CONFIG.url}/rest/v1/comments`;
-                const response = await fetch(url, {
-                    method: 'POST',
-                    headers: {
-                        'apikey': SUPABASE_CONFIG.anonKey,
-                        'Authorization': `Bearer ${SUPABASE_CONFIG.anonKey}`,
-                        'Content-Type': 'application/json',
-                        'Prefer': 'return=representation'
-                    },
-                    body: JSON.stringify({
-                        post_id: postId,
-                        name: comment.name,
-                        email: comment.email || null,
-                        comment: comment.comment,
-                        date: comment.date,
-                        parent_id: comment.parent_id || null
-                    })
-                });
-                if (response.ok) {
-                    const data = await response.json();
-                    const newComment = data[0] || comment;
-                    if (newComment.parent_id) {
-                        triggerNotification(postId, newComment);
-                    }
-                    return await this.getComments(postId);
-                } else {
-                    const errBody = await response.text();
-                    console.error(`Supabase error saving comment (status ${response.status}):`, errBody);
-                }
-            } catch (e) {
-                console.error("Failed to insert comment to Supabase database. Falling back to local storage comments.", e);
-            }
-        }
-
-        // LocalStorage Fallback
-        const comments = JSON.parse(localStorage.getItem(`comments_${postId}`)) || [];
-        comment.id = comment.id || String(Date.now());
-        comments.push(comment);
-        localStorage.setItem(`comments_${postId}`, JSON.stringify(comments));
-        if (comment.parent_id) {
-            triggerNotification(postId, comment);
-        }
-        return comments;
+      } catch (e) {
+        console.error(
+          "Failed to connect to Supabase database. Falling back to local storage comments.",
+          e,
+        );
+      }
     }
+
+    // LocalStorage Fallback
+    return JSON.parse(localStorage.getItem(`comments_${postId}`)) || [];
+  },
+
+  async addComment(postId, comment) {
+    if (SUPABASE_CONFIG.url && SUPABASE_CONFIG.anonKey) {
+      try {
+        const url = `${SUPABASE_CONFIG.url}/rest/v1/comments`;
+        const response = await fetch(url, {
+          method: "POST",
+          headers: {
+            apikey: SUPABASE_CONFIG.anonKey,
+            Authorization: `Bearer ${SUPABASE_CONFIG.anonKey}`,
+            "Content-Type": "application/json",
+            Prefer: "return=representation",
+          },
+          body: JSON.stringify({
+            post_id: postId,
+            name: comment.name,
+            email: comment.email || null,
+            comment: comment.comment,
+            date: comment.date,
+            parent_id: comment.parent_id || null,
+          }),
+        });
+        if (response.ok) {
+          const data = await response.json();
+          const newComment = data[0] || comment;
+          if (newComment.parent_id) {
+            triggerNotification(postId, newComment);
+          }
+          return await this.getComments(postId);
+        } else {
+          const errBody = await response.text();
+          console.error(
+            `Supabase error saving comment (status ${response.status}):`,
+            errBody,
+          );
+        }
+      } catch (e) {
+        console.error(
+          "Failed to insert comment to Supabase database. Falling back to local storage comments.",
+          e,
+        );
+      }
+    }
+
+    // LocalStorage Fallback
+    const comments =
+      JSON.parse(localStorage.getItem(`comments_${postId}`)) || [];
+    comment.id = comment.id || String(Date.now());
+    comments.push(comment);
+    localStorage.setItem(`comments_${postId}`, JSON.stringify(comments));
+    if (comment.parent_id) {
+      triggerNotification(postId, comment);
+    }
+    return comments;
+  },
 };
 
 async function triggerNotification(postId, replyComment) {
-    console.log(`[Notification Triggered] Comment reply from: ${replyComment.name} on post ${postId}.`);
-    if (SUPABASE_CONFIG.notificationWebhookUrl) {
-        try {
-            const res = await fetch(SUPABASE_CONFIG.notificationWebhookUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    post_id: postId,
-                    reply_author: replyComment.name,
-                    reply_comment: replyComment.comment,
-                    reply_date: replyComment.date,
-                    parent_id: replyComment.parent_id
-                })
-            });
-            if (!res.ok) {
-                console.warn(`Webhook endpoint returned status ${res.status}`);
-            }
-        } catch (err) {
-            console.error("Failed to trigger webhook email alert:", err);
-        }
+  console.log(
+    `[Notification Triggered] Comment reply from: ${replyComment.name} on post ${postId}.`,
+  );
+  if (SUPABASE_CONFIG.notificationWebhookUrl) {
+    try {
+      const res = await fetch(SUPABASE_CONFIG.notificationWebhookUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          post_id: postId,
+          reply_author: replyComment.name,
+          reply_comment: replyComment.comment,
+          reply_date: replyComment.date,
+          parent_id: replyComment.parent_id,
+        }),
+      });
+      if (!res.ok) {
+        console.warn(`Webhook endpoint returned status ${res.status}`);
+      }
+    } catch (err) {
+      console.error("Failed to trigger webhook email alert:", err);
     }
+  }
 }
 
 // ==========================================================================
 // UTILITY ENGINE
 // ==========================================================================
 function calculateReadingTime(text) {
-    const wordsPerMinute = 200;
-    const words = text ? text.replace(/<[^>]*>/g, '').split(/\s+/).length : 0;
-    return Math.max(1, Math.ceil(words / wordsPerMinute));
+  const wordsPerMinute = 200;
+  const words = text ? text.replace(/<[^>]*>/g, "").split(/\s+/).length : 0;
+  return Math.max(1, Math.ceil(words / wordsPerMinute));
 }
 
 // ==========================================================================
 // DYNAMIC DOM LOADERS & CONTROLLERS
 // ==========================================================================
-let activeCategory = 'all';
+let activeCategory = "all";
 let currentArticlesList = [];
 
 // ------------------------------
@@ -437,8 +525,8 @@ let currentArticlesList = [];
  * @returns {string} HTML string for the card.
  */
 function relatedPostCardHTML(article) {
-    const img = article.image || 'assets/placeholder.svg';
-    return `
+  const img = article.image || "assets/placeholder.svg";
+  return `
         <div class="rel-post-card">
             <img src="${img}" alt="Related post preview" onerror="this.src='assets/placeholder.svg'">
             <div class="rel-post-card-content">
@@ -454,131 +542,138 @@ function relatedPostCardHTML(article) {
  * @param {string|null} excludeId - Optional article ID to exclude (e.g., the current article).
  */
 function populateRelatedPosts(articles, excludeId = null) {
-    // Containers can be: .sidebar-rel-posts (in post.html sidebar) or .related-posts-grid (footer sections).
-    const containers = document.querySelectorAll('.sidebar-rel-posts, .related-posts-grid');
-    containers.forEach(container => {
-        // Clear existing content
-        container.innerHTML = '';
-        // Choose up to 4 articles, excluding the current one if provided.
-        const filtered = articles.filter(a => a.id !== excludeId).slice(0, 4);
-        filtered.forEach(a => {
-            container.insertAdjacentHTML('beforeend', relatedPostCardHTML(a));
-        });
+  // Containers can be: .sidebar-rel-posts (in post.html sidebar) or .related-posts-grid (footer sections).
+  const containers = document.querySelectorAll(
+    ".sidebar-rel-posts, .related-posts-grid",
+  );
+  containers.forEach((container) => {
+    // Clear existing content
+    container.innerHTML = "";
+    // Choose up to 4 articles, excluding the current one if provided.
+    const filtered = articles.filter((a) => a.id !== excludeId).slice(0, 4);
+    filtered.forEach((a) => {
+      container.insertAdjacentHTML("beforeend", relatedPostCardHTML(a));
     });
+  });
 }
 
-document.addEventListener('DOMContentLoaded', async () => {
-    try {
-        console.log('🔎 DOMContentLoaded – initializing');
-        initTheme();
+document.addEventListener("DOMContentLoaded", async () => {
+  try {
+    console.log("🔎 DOMContentLoaded – initializing");
+    initTheme();
 
-        const path = window.location.pathname;
-        const urlParams = new URLSearchParams(window.location.search);
-        const postId = urlParams.get('id');
-        const isHome = path.includes('index.html') || path.endsWith('/') || path === '';
-        const isBlog = path.includes('blog.html');
-        const isPost = path.includes('post.html');
-        const isCMS = path.includes('cms.html');
-        const isPress = path.includes('submit-press.html');
-
-        const themeBtn = document.getElementById('theme-toggle-btn');
-        if (themeBtn) {
-            themeBtn.addEventListener('click', toggleTheme);
-        }
-
-        const categoryParam = urlParams.get('cat');
-        if (categoryParam) {
-            activeCategory = categoryParam;
-        }
-
-        initBackToTop();
-
-        if (isHome) {
-            await loadHomePage();
-        } else if (isBlog) {
-            await loadBlogPage();
-        } else if (isPost) {
-            await loadPostPage(postId);
-        } else if (isCMS) {
-            loadCMSPage();
-        } else if (isPress) {
-            loadPressSubmissionPage();
-        }
-    } catch (err) {
-        console.error('❌ Fatal initialization error:', err);
+    const path = window.location.pathname;
+    const urlParams = new URLSearchParams(window.location.search);
+    const postId = urlParams.get("id");
+    const isHome = path.includes('index.html') || path.endsWith('/') || path === '' || path === '/';
+    const isBlog = path.includes('blog.html') || path.endsWith('/blog');
+    const isPost = path.includes('post.html') || path.endsWith('/post');
+    const isCMS = path.includes('cms.html') || path.endsWith('/cms');
+    const isPress = path.includes('submit-press.html') || path.endsWith('/submit-press');
+    const themeBtn = document.getElementById("theme-toggle-btn");
+    if (themeBtn) {
+      themeBtn.addEventListener("click", toggleTheme);
     }
+
+    const categoryParam = urlParams.get("cat");
+    if (categoryParam) {
+      activeCategory = categoryParam;
+    }
+
+    initBackToTop();
+
+    if (isHome) {
+      await loadHomePage();
+    } else if (isBlog) {
+      await loadBlogPage();
+    } else if (isPost) {
+      await loadPostPage(postId);
+    } else if (isCMS) {
+      loadCMSPage();
+    } else if (isPress) {
+      loadPressSubmissionPage();
+    }
+  } catch (err) {
+    console.error("❌ Fatal initialization error:", err);
+  }
 });
 
 function initBackToTop() {
-    const btn = document.getElementById('back-to-top-btn');
-    if (!btn) return;
+  const btn = document.getElementById("back-to-top-btn");
+  if (!btn) return;
 
-    window.addEventListener('scroll', () => {
-        if (window.scrollY > 300) {
-            btn.classList.add('visible');
-        } else {
-            btn.classList.remove('visible');
-        }
-    });
+  window.addEventListener("scroll", () => {
+    if (window.scrollY > 300) {
+      btn.classList.add("visible");
+    } else {
+      btn.classList.remove("visible");
+    }
+  });
 
-    btn.addEventListener('click', () => {
-        window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-        });
+  btn.addEventListener("click", () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
     });
+  });
 }
 
 function filterCategory(category) {
-    activeCategory = category;
-    renderFilteredArticles();
+  activeCategory = category;
+  renderFilteredArticles();
 }
 
 function runSearch(query) {
-    const normalizedQuery = query.toLowerCase().trim();
-    const cards = document.querySelectorAll('.blog-post, .feat-post');
-    
-    cards.forEach(card => {
-        const title = card.querySelector('h2').innerText.toLowerCase();
-        const summary = card.querySelector('p').innerText.toLowerCase();
-        const category = card.getAttribute('data-category');
+  const normalizedQuery = query.toLowerCase().trim();
+  const cards = document.querySelectorAll(".blog-post, .feat-post");
 
-        const matchesSearch = title.includes(normalizedQuery) || summary.includes(normalizedQuery);
-        const matchesCategory = (activeCategory === 'all' || category === activeCategory);
+  cards.forEach((card) => {
+    const title = card.querySelector("h2").innerText.toLowerCase();
+    const summary = card.querySelector("p").innerText.toLowerCase();
+    const category = card.getAttribute("data-category");
 
-        if (matchesSearch && matchesCategory) {
-            card.style.display = '';
-        } else {
-            card.style.display = 'none';
-        }
-    });
+    const matchesSearch =
+      title.includes(normalizedQuery) || summary.includes(normalizedQuery);
+    const matchesCategory =
+      activeCategory === "all" || category === activeCategory;
+
+    if (matchesSearch && matchesCategory) {
+      card.style.display = "";
+    } else {
+      card.style.display = "none";
+    }
+  });
 }
 
 function renderFilteredArticles() {
-    const postGrid = document.querySelector('.post-grid');
-    if (!postGrid) return;
+  const postGrid = document.querySelector(".post-grid");
+  if (!postGrid) return;
 
-    postGrid.innerHTML = '';
-    
-    const displayList = activeCategory === 'all' 
-        ? currentArticlesList 
-        : currentArticlesList.filter(a => a.category === activeCategory);
+  postGrid.innerHTML = "";
 
-    if (displayList.length === 0) {
-        postGrid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: var(--color-text-muted); padding: 40px;">No articles found in this category.</div>`;
-        return;
-    }
+  const displayList =
+    activeCategory === "all"
+      ? currentArticlesList
+      : currentArticlesList.filter((a) => a.category === activeCategory);
 
-    displayList.forEach(article => {
-        const readTime = calculateReadingTime(article.body || article.summary);
-        const tagHTML = article.tags.map(t =>
-    `<a href="blog.html?cat=${encodeURIComponent(t)}" class="tag-pill">${t}</a>`
-).join('');
-        
-        const cardHTML = `
+  if (displayList.length === 0) {
+    postGrid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: var(--color-text-muted); padding: 40px;">No articles found in this category.</div>`;
+    return;
+  }
+
+  displayList.forEach((article) => {
+    const readTime = calculateReadingTime(article.body || article.summary);
+    const tagHTML = article.tags
+      .map(
+        (t) =>
+          `<a href="blog.html?cat=${encodeURIComponent(t)}" class="tag-pill">${t}</a>`,
+      )
+      .join("");
+
+    const cardHTML = `
             <div class="blog-post" data-category="${article.category}">
                 <div class="blog-post-image-wrapper">
-                    <img src="${article.image || 'assets/placeholder.svg'}" alt="${article.title}" class="post-hero-image">
+                    <img src="${article.image || "assets/placeholder.svg"}" alt="${article.title}" class="post-hero-image">
                 </div>
                 <div class="post-meta">
                     <span class="meta-author">By ${article.author}</span>
@@ -596,31 +691,33 @@ function renderFilteredArticles() {
                 <a href="post.html?id=${article.id}" target="_self" rel="noopener noreferrer" class="read-more">Read More</a>
             </div>
         `;
-        postGrid.insertAdjacentHTML('beforeend', cardHTML);
-    });
+    postGrid.insertAdjacentHTML("beforeend", cardHTML);
+  });
 }
 
 async function loadHomePage() {
-    const allArticles = await CMS_API.getArticles();
-    currentArticlesList = [...allArticles];
-    
-    const featured = currentArticlesList[0];
-    const featPostContainer = document.querySelector('.feat-post');
+  const allArticles = await CMS_API.getArticles();
+  currentArticlesList = [...allArticles];
 
-    // Render related posts for the home page footer (no excluded ID)
-    populateRelatedPosts(currentArticlesList);
+  const featured = currentArticlesList[0];
+  const featPostContainer = document.querySelector(".feat-post");
 
-    
-    if (featured && featPostContainer) {
-        const readTime = calculateReadingTime(featured.body || featured.summary);
-        const tags = featured.tags.map(t =>
-    `<a href="blog.html?cat=${encodeURIComponent(t)}" class="tag-pill">${t}</a>`
-).join('');
-        
-        featPostContainer.setAttribute('data-category', featured.category);
-        featPostContainer.innerHTML = `
+  // Render related posts for the home page footer (no excluded ID)
+  populateRelatedPosts(currentArticlesList);
+
+  if (featured && featPostContainer) {
+    const readTime = calculateReadingTime(featured.body || featured.summary);
+    const tags = featured.tags
+      .map(
+        (t) =>
+          `<a href="blog.html?cat=${encodeURIComponent(t)}" class="tag-pill">${t}</a>`,
+      )
+      .join("");
+
+    featPostContainer.setAttribute("data-category", featured.category);
+    featPostContainer.innerHTML = `
             <div class="feat-post-image-wrapper">
-                <img src="${featured.image || 'assets/placeholder.svg'}" alt="${featured.title}" class="post-hero-image">
+                <img src="${featured.image || "assets/placeholder.svg"}" alt="${featured.title}" class="post-hero-image">
             </div>
             <div class="feat-content">
                 <div class="post-meta">
@@ -639,52 +736,52 @@ async function loadHomePage() {
                 <a href="post.html?id=${featured.id}" target="_self" rel="noopener noreferrer" class="read-more">Read More</a>
             </div>
         `;
-    }
+  }
 
-    const recentGridList = currentArticlesList.slice(1);
-    currentArticlesList = recentGridList;
-    renderFilteredArticles();
+  const recentGridList = currentArticlesList.slice(1);
+  currentArticlesList = recentGridList;
+  renderFilteredArticles();
 
-    renderExploreByCategory(allArticles);
+  renderExploreByCategory(allArticles);
 
-    const homeSearch = document.getElementById('home-search-input');
-    if (homeSearch) {
-        homeSearch.addEventListener('input', (e) => {
-            runSearch(e.target.value);
-        });
-    }
+  const homeSearch = document.getElementById("home-search-input");
+  if (homeSearch) {
+    homeSearch.addEventListener("input", (e) => {
+      runSearch(e.target.value);
+    });
+  }
 }
 
 function renderExploreByCategory(articles) {
-    const exploreGrid = document.getElementById('explore-category-grid');
-    if (!exploreGrid) return;
+  const exploreGrid = document.getElementById("explore-category-grid");
+  if (!exploreGrid) return;
 
-    exploreGrid.innerHTML = '';
-    const categories = [
-        { key: 'investing', name: 'Investing' },
-        { key: 'markets', name: 'Markets' },
-        { key: 'crypto', name: 'Cryptocurrency' },
-        { key: 'personal-finance', name: 'Personal Finance' }
-    ];
+  exploreGrid.innerHTML = "";
+  const categories = [
+    { key: "investing", name: "Investing" },
+    { key: "markets", name: "Markets" },
+    { key: "crypto", name: "Cryptocurrency" },
+    { key: "personal-finance", name: "Personal Finance" },
+  ];
 
-    categories.forEach(cat => {
-        const matchingPosts = articles.filter(a => a.category === cat.key);
-        let listHTML = '';
+  categories.forEach((cat) => {
+    const matchingPosts = articles.filter((a) => a.category === cat.key);
+    let listHTML = "";
 
-        if (matchingPosts.length === 0) {
-            listHTML = `<li style="color: var(--color-text-muted); font-size: 0.88rem; list-style: none;">No posts in this category yet.</li>`;
-        } else {
-            matchingPosts.forEach(post => {
-                listHTML += `
+    if (matchingPosts.length === 0) {
+      listHTML = `<li style="color: var(--color-text-muted); font-size: 0.88rem; list-style: none;">No posts in this category yet.</li>`;
+    } else {
+      matchingPosts.forEach((post) => {
+        listHTML += `
                     <li>
                         <a href="post.html?id=${post.id}" target="_self" rel="noopener noreferrer">${post.title}</a>
                         <span style="font-size: 0.75rem; color: var(--color-text-muted); display: block; margin-top: 2px;">${post.date}</span>
                     </li>
                 `;
-            });
-        }
+      });
+    }
 
-        const colHTML = `
+    const colHTML = `
             <div class="category-group-col">
                 <h3>${cat.name}</h3>
                 <ul>
@@ -692,175 +789,197 @@ function renderExploreByCategory(articles) {
                 </ul>
             </div>
         `;
-        exploreGrid.insertAdjacentHTML('beforeend', colHTML);
-    });
+    exploreGrid.insertAdjacentHTML("beforeend", colHTML);
+  });
 }
 
 async function loadBlogPage() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const label = urlParams.get('cat') || '';
+  const urlParams = new URLSearchParams(window.location.search);
+  const label = urlParams.get("cat") || "";
 
-    // Update heading
-    const labelHeading = document.getElementById('post-label');
-    if (labelHeading) {
-        labelHeading.textContent = label
-            ? label.charAt(0).toUpperCase() + label.slice(1).replace(/-/g, ' ')
-            : 'Latest Briefings';
-    }
+  // Update heading
+  const labelHeading = document.getElementById("post-label");
+  if (labelHeading) {
+    labelHeading.textContent = label
+      ? label.charAt(0).toUpperCase() + label.slice(1).replace(/-/g, " ")
+      : "Latest Briefings";
+  }
 
-    // Fetch all posts then filter client-side
-    const allArticles = await CMS_API.getArticles();
-    currentArticlesList = label
-        ? allArticles.filter(a => a.category === label || a.tags.includes(label))
-        : allArticles;
+  // Fetch all posts then filter client-side
+  const allArticles = await CMS_API.getArticles();
+  currentArticlesList = label
+    ? allArticles.filter((a) => a.category === label || a.tags.includes(label))
+    : allArticles;
 
-    console.log('🟢 Blog page loaded articles count:', currentArticlesList.length);
+  console.log(
+    "🟢 Blog page loaded articles count:",
+    currentArticlesList.length,
+  );
 
-    // Render tag cloud
-    const allTags = [...new Set(allArticles.flatMap(a => a.tags))].filter(Boolean);
-    const tagCloud = document.getElementById('tag-cloud');
-    if (tagCloud) {
-        tagCloud.innerHTML =
-            `<a href="blog.html" class="tag-pill ${!label ? 'active' : ''}">All</a>` +
-            allTags.map(tag =>
-                `<a href="blog.html?cat=${encodeURIComponent(tag)}" class="tag-pill ${tag === label ? 'active' : ''}">${tag}</a>`
-            ).join('');
-    }
+  // Render tag cloud
+  const allTags = [...new Set(allArticles.flatMap((a) => a.tags))].filter(
+    Boolean,
+  );
+  const tagCloud = document.getElementById("tag-cloud");
+  if (tagCloud) {
+    tagCloud.innerHTML =
+      `<a href="blog.html" class="tag-pill ${!label ? "active" : ""}">All</a>` +
+      allTags
+        .map(
+          (tag) =>
+            `<a href="blog.html?cat=${encodeURIComponent(tag)}" class="tag-pill ${tag === label ? "active" : ""}">${tag}</a>`,
+        )
+        .join("");
+  }
 
-    renderFilteredArticles();
-    populateRelatedPosts(allArticles);
+  renderFilteredArticles();
+  populateRelatedPosts(allArticles);
 
-    // Search
-    const blogSearch = document.getElementById('blog-search-input');
-    if (blogSearch) {
-        blogSearch.addEventListener('input', (e) => {
-            const q = e.target.value.toLowerCase().trim();
-            currentArticlesList = allArticles.filter(a =>
-                a.title.toLowerCase().includes(q) ||
-                a.summary.toLowerCase().includes(q) ||
-                a.tags.some(t => t.toLowerCase().includes(q))
-            );
-            renderFilteredArticles();
-        });
-    }
+  // Search
+  const blogSearch = document.getElementById("blog-search-input");
+  if (blogSearch) {
+    blogSearch.addEventListener("input", (e) => {
+      const q = e.target.value.toLowerCase().trim();
+      currentArticlesList = allArticles.filter(
+        (a) =>
+          a.title.toLowerCase().includes(q) ||
+          a.summary.toLowerCase().includes(q) ||
+          a.tags.some((t) => t.toLowerCase().includes(q)),
+      );
+      renderFilteredArticles();
+    });
+  }
 }
 
 async function loadPostPage(postId) {
-    if (!postId) {
-        document.title = 'Article Not Found | Tryumph Magazine';
-        const content = document.querySelector('.post-content');
-        if (content) content.innerHTML = '<p>No article ID specified.</p>';
-        return;
-    }
+  if (!postId) {
+    document.title = "Article Not Found | Tryumph Magazine";
+    const content = document.querySelector(".post-content");
+    if (content) content.innerHTML = "<p>No article ID specified.</p>";
+    return;
+  }
 
-    // Ensure we have the full articles list for related posts
-    currentArticlesList = await CMS_API.getArticles();
-    const article = await CMS_API.getArticleById(postId);
+  // Ensure we have the full articles list for related posts
+  currentArticlesList = await CMS_API.getArticles();
+  const article = await CMS_API.getArticleById(postId);
 
-    if (!article) {
-        document.title = 'Article Not Found | Tryumph Magazine';
-        const content = document.querySelector('.post-content');
-        if (content) content.innerHTML = '<p style="color:var(--color-text-muted)">Article could not be loaded. Please try again later.</p>';
-        console.error('❌ loadPostPage: no article found for id:', postId);
-        return;
-    }
+  if (!article) {
+    document.title = "Article Not Found | Tryumph Magazine";
+    const content = document.querySelector(".post-content");
+    if (content)
+      content.innerHTML =
+        '<p style="color:var(--color-text-muted)">Article could not be loaded. Please try again later.</p>';
+    console.error("❌ loadPostPage: no article found for id:", postId);
+    return;
+  }
 
-    console.log('✅ loadPostPage: rendering article:', article.title);
+  console.log("✅ loadPostPage: rendering article:", article.title);
 
-    const computedReadTime = calculateReadingTime(article.body);
-    document.title = `${article.title} | Tryumph Magazine`;
+  const computedReadTime = calculateReadingTime(article.body);
+  document.title = `${article.title} | Tryumph Magazine`;
 
-    const currentBreadcrumb = document.querySelector('.breadcrumbs li:last-child');
-    if (currentBreadcrumb) {
-        currentBreadcrumb.textContent = article.title;
-    }
-    const categoryBreadcrumb = document.querySelector('.breadcrumbs li:nth-child(2) a');
-    if (categoryBreadcrumb) {
-        categoryBreadcrumb.textContent = article.category.toUpperCase().replace('-', ' ');
-        categoryBreadcrumb.href = `blog.html?cat=${article.category}`;
-    }
+  const currentBreadcrumb = document.querySelector(
+    ".breadcrumbs li:last-child",
+  );
+  if (currentBreadcrumb) {
+    currentBreadcrumb.textContent = article.title;
+  }
+  const categoryBreadcrumb = document.querySelector(
+    ".breadcrumbs li:nth-child(2) a",
+  );
+  if (categoryBreadcrumb) {
+    categoryBreadcrumb.textContent = article.category
+      .toUpperCase()
+      .replace("-", " ");
+    categoryBreadcrumb.href = `blog.html?cat=${article.category}`;
+  }
 
-    const postHeader = document.querySelector('.post-header');
-    if (postHeader) {
-        postHeader.querySelector('h1').textContent = article.title;
+  const postHeader = document.querySelector(".post-header");
+  if (postHeader) {
+    postHeader.querySelector("h1").textContent = article.title;
 
-        const tagsWrapper = postHeader.querySelector('.post-tags-container');
-        if (tagsWrapper) {
-            tagsWrapper.innerHTML = `
+    const tagsWrapper = postHeader.querySelector(".post-tags-container");
+    if (tagsWrapper) {
+      tagsWrapper.innerHTML = `
                 <span class="tags-label">Tags:</span>
-                ${article.tags.map(t => `<span class="tag-pill">${t}</span>`).join('')}
+                ${article.tags.map((t) => `<span class="tag-pill">${t}</span>`).join("")}
             `;
-        }
+    }
 
-        const heroImage = postHeader.querySelector('.post-hero-image');
-        if (heroImage) {
-            heroImage.src = article.image || 'assets/placeholder.svg';
-            heroImage.alt = article.title;
-            heroImage.onerror = () => { heroImage.src = 'assets/placeholder.svg'; };
-        }
+    const heroImage = postHeader.querySelector(".post-hero-image");
+    if (heroImage) {
+      heroImage.src = article.image || "assets/placeholder.svg";
+      heroImage.alt = article.title;
+      heroImage.onerror = () => {
+        heroImage.src = "assets/placeholder.svg";
+      };
+    }
 
-        const metaSpan = postHeader.querySelector('.post-meta');
-        if (metaSpan) {
-            metaSpan.innerHTML = `
+    const metaSpan = postHeader.querySelector(".post-meta");
+    if (metaSpan) {
+      metaSpan.innerHTML = `
                 <span class="meta-author">By ${article.author}</span>
                 <span class="meta-divider">&bull;</span>
                 <span class="meta-date">${article.date}</span>
                 <span class="meta-divider">&bull;</span>
                 <span class="meta-time">${computedReadTime} min read</span>
             `;
-        }
     }
+  }
 
-    const contentBody = document.querySelector('.post-content');
-    if (contentBody) {
-        contentBody.innerHTML = article.body || '<p>No content available.</p>';
-    }
+  const contentBody = document.querySelector(".post-content");
+  if (contentBody) {
+    contentBody.innerHTML = article.body || "<p>No content available.</p>";
+  }
 
-    const bioWidget = document.getElementById('author-bio-widget');
-    if (bioWidget) {
-        bioWidget.innerHTML = `
+  const bioWidget = document.getElementById("author-bio-widget");
+  if (bioWidget) {
+    bioWidget.innerHTML = `
             <h3>Author Profile</h3>
             <div class="author-bio-card" style="margin-top: 15px;">
                 <h4 style="margin: 0; color: var(--color-primary); font-size: 1.15rem;">${article.author}</h4>
-                <p style="font-size: 0.9rem; color: var(--color-text-muted); margin: 8px 0 12px 0; line-height: 1.45;">${article.authorBio || 'Finance writer at Tryumph Magazine.'}</p>
+                <p style="font-size: 0.9rem; color: var(--color-text-muted); margin: 8px 0 12px 0; line-height: 1.45;">${article.authorBio || "Finance writer at Tryumph Magazine."}</p>
                 <a href="about.html" style="font-weight: 700; font-size: 0.85rem; text-transform: uppercase;">View Author Page &rarr;</a>
             </div>
         `;
-    }
+  }
 
-    populateRelatedPosts(currentArticlesList, article.id);
-    loadCommentsSection(article.id);
+  populateRelatedPosts(currentArticlesList, article.id);
+  loadCommentsSection(article.id);
 }
 
 async function loadCommentsSection(postId) {
+  // Debug: ensure we have a valid postId
+  console.log("🔧 loadCommentsSection called with postId:", postId);
+  if (!postId) {
+    console.warn("⚠️ postId is undefined – aborting comment loading");
+    return;
+  }
+  const commentsList = document.getElementById("comments-list");
+  const commentsCount = document.getElementById("comments-count");
+  const commentForm = document.getElementById("comment-form");
 
-    // Debug: ensure we have a valid postId
-    console.log('🔧 loadCommentsSection called with postId:', postId);
-    if (!postId) {
-        console.warn('⚠️ postId is undefined – aborting comment loading');
-        return;
+  if (!commentsList) return;
+
+  // Expose toggleReplyForm to global scope so inline cancel buttons or HTML event handlers can reference it
+  window.toggleReplyForm = (parentId) => {
+    const container = document.getElementById(
+      `reply-form-container-${parentId}`,
+    );
+    if (!container) return;
+
+    // If reply form already open, close it
+    if (container.innerHTML !== "") {
+      container.innerHTML = "";
+      return;
     }
-    const commentsList = document.getElementById('comments-list');
-    const commentsCount = document.getElementById('comments-count');
-    const commentForm = document.getElementById('comment-form');
 
-    if (!commentsList) return;
+    // Close any other open reply forms
+    document
+      .querySelectorAll('[id^="reply-form-container-"]')
+      .forEach((el) => (el.innerHTML = ""));
 
-    // Expose toggleReplyForm to global scope so inline cancel buttons or HTML event handlers can reference it
-    window.toggleReplyForm = (parentId) => {
-        const container = document.getElementById(`reply-form-container-${parentId}`);
-        if (!container) return;
-
-        // If reply form already open, close it
-        if (container.innerHTML !== '') {
-            container.innerHTML = '';
-            return;
-        }
-
-        // Close any other open reply forms
-        document.querySelectorAll('[id^="reply-form-container-"]').forEach(el => el.innerHTML = '');
-
-        const formHTML = `
+    const formHTML = `
             <form id="reply-form-${parentId}" class="inline-reply-box">
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                     <input type="text" id="reply-name-${parentId}" class="comment-input" required placeholder="Your Name" style="margin-bottom: 0; padding: 8px 12px; font-size: 0.88rem;">
@@ -873,66 +992,72 @@ async function loadCommentsSection(postId) {
                 </div>
             </form>
         `;
-        container.innerHTML = formHTML;
+    container.innerHTML = formHTML;
 
-        const rForm = document.getElementById(`reply-form-${parentId}`);
-        if (rForm) {
-            rForm.onsubmit = async (e) => {
-                e.preventDefault();
-                const nameInput = document.getElementById(`reply-name-${parentId}`);
-                const emailInput = document.getElementById(`reply-email-${parentId}`);
-                const bodyInput = document.getElementById(`reply-body-${parentId}`);
+    const rForm = document.getElementById(`reply-form-${parentId}`);
+    if (rForm) {
+      rForm.onsubmit = async (e) => {
+        e.preventDefault();
+        const nameInput = document.getElementById(`reply-name-${parentId}`);
+        const emailInput = document.getElementById(`reply-email-${parentId}`);
+        const bodyInput = document.getElementById(`reply-body-${parentId}`);
 
-                if (nameInput && bodyInput) {
-                    const now = new Date();
-                    const dateString = now.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
-                    
-                    await COMMENTS_API.addComment(postId, {
-                        name: nameInput.value,
-                        email: emailInput ? emailInput.value : '',
-                        comment: bodyInput.value,
-                        date: dateString,
-                        parent_id: parentId
-                    });
+        if (nameInput && bodyInput) {
+          const now = new Date();
+          const dateString = now.toLocaleDateString(undefined, {
+            month: "short",
+            day: "numeric",
+            year: "numeric",
+          });
 
-                    await renderComments();
-                }
-            };
+          await COMMENTS_API.addComment(postId, {
+            name: nameInput.value,
+            email: emailInput ? emailInput.value : "",
+            comment: bodyInput.value,
+            date: dateString,
+            parent_id: parentId,
+          });
+
+          await renderComments();
         }
-    };
+      };
+    }
+  };
 
-    const renderComments = async () => {
-        const comments = await COMMENTS_API.getComments(postId);
-        console.log('🔧 Fetched comments:', comments);
-        commentsCount.textContent = `${comments.length} comment${comments.length !== 1 ? 's' : ''}`;
-        
-        commentsList.innerHTML = '';
-        if (comments.length === 0) {
-            commentsList.innerHTML = `<p style="color: var(--color-text-muted); font-style: italic;">No comments yet. Be the first to share your thoughts!</p>`;
-            return;
-        }
+  const renderComments = async () => {
+    const comments = await COMMENTS_API.getComments(postId);
+    console.log("🔧 Fetched comments:", comments);
+    commentsCount.textContent = `${comments.length} comment${comments.length !== 1 ? "s" : ""}`;
 
-        // Build a map of comments by ID
-        const commentMap = {};
-        comments.forEach(c => {
-            c.id = String(c.id);
-            c.replies = [];
-            commentMap[c.id] = c;
-        });
+    commentsList.innerHTML = "";
+    if (comments.length === 0) {
+      commentsList.innerHTML = `<p style="color: var(--color-text-muted); font-style: italic;">No comments yet. Be the first to share your thoughts!</p>`;
+      return;
+    }
 
-        const rootComments = [];
-        comments.forEach(c => {
-            if (c.parent_id && commentMap[String(c.parent_id)]) {
-                commentMap[String(c.parent_id)].replies.push(c);
-            } else {
-                rootComments.push(c);
-            }
-        });
+    // Build a map of comments by ID
+    const commentMap = {};
+    comments.forEach((c) => {
+      c.id = String(c.id);
+      c.replies = [];
+      commentMap[c.id] = c;
+    });
 
-        // Helper function to render a comment and its nested replies
-        const renderCommentHtml = (c, isReply = false) => {
-            const replyBadge = isReply ? `<span class="reply-badge">Reply</span>` : '';
-            return `
+    const rootComments = [];
+    comments.forEach((c) => {
+      if (c.parent_id && commentMap[String(c.parent_id)]) {
+        commentMap[String(c.parent_id)].replies.push(c);
+      } else {
+        rootComments.push(c);
+      }
+    });
+
+    // Helper function to render a comment and its nested replies
+    const renderCommentHtml = (c, isReply = false) => {
+      const replyBadge = isReply
+        ? `<span class="reply-badge">Reply</span>`
+        : "";
+      return `
                 <div class="comment-item" id="comment-node-${c.id}" style="border-bottom: 1px solid var(--color-border); padding: 15px 0;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
                         <div>
@@ -949,102 +1074,118 @@ async function loadCommentsSection(postId) {
                         </button>
                     </div>
                     <div id="reply-form-container-${c.id}"></div>
-                    ${c.replies.length > 0 ? `
+                    ${
+                      c.replies.length > 0
+                        ? `
                         <div class="replies-container">
-                            ${c.replies.map(r => renderCommentHtml(r, true)).join('')}
+                            ${c.replies.map((r) => renderCommentHtml(r, true)).join("")}
                         </div>
-                    ` : ''}
+                    `
+                        : ""
+                    }
                 </div>
             `;
-        };
-
-        commentsList.innerHTML = rootComments.map(c => renderCommentHtml(c)).join('');
-
-        // Attach event listeners to reply buttons
-        const replyButtons = commentsList.querySelectorAll('.comment-reply-btn');
-        replyButtons.forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const parentId = btn.getAttribute('data-comment-id');
-                window.toggleReplyForm(parentId);
-            });
-        });
     };
 
-    await renderComments();
+    commentsList.innerHTML = rootComments
+      .map((c) => renderCommentHtml(c))
+      .join("");
 
-    if (commentForm) {
-        commentForm.onsubmit = async (e) => {
-            e.preventDefault();
-            const nameInput = document.getElementById('comment-name');
-            const emailInput = document.getElementById('comment-email');
-            const bodyInput = document.getElementById('comment-body');
+    // Attach event listeners to reply buttons
+    const replyButtons = commentsList.querySelectorAll(".comment-reply-btn");
+    replyButtons.forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        const parentId = btn.getAttribute("data-comment-id");
+        window.toggleReplyForm(parentId);
+      });
+    });
+  };
 
-            if (nameInput && bodyInput) {
-                const now = new Date();
-                const dateString = now.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
-                
-                await COMMENTS_API.addComment(postId, {
-                    name: nameInput.value,
-                    email: emailInput ? emailInput.value : '',
-                    comment: bodyInput.value,
-                    date: dateString
-                });
+  await renderComments();
 
-                bodyInput.value = '';
-                if (emailInput) emailInput.value = '';
-                nameInput.value = '';
-                await renderComments();
-            }
-        };
-    }
+  if (commentForm) {
+    commentForm.onsubmit = async (e) => {
+      e.preventDefault();
+      const nameInput = document.getElementById("comment-name");
+      const emailInput = document.getElementById("comment-email");
+      const bodyInput = document.getElementById("comment-body");
+
+      if (nameInput && bodyInput) {
+        const now = new Date();
+        const dateString = now.toLocaleDateString(undefined, {
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+        });
+
+        await COMMENTS_API.addComment(postId, {
+          name: nameInput.value,
+          email: emailInput ? emailInput.value : "",
+          comment: bodyInput.value,
+          date: dateString,
+        });
+
+        bodyInput.value = "";
+        if (emailInput) emailInput.value = "";
+        nameInput.value = "";
+        await renderComments();
+      }
+    };
+  }
 }
 
 function loadCMSPage() {
-    const cmsForm = document.getElementById('cms-publish-form');
-    if (!cmsForm) return;
+  const cmsForm = document.getElementById("cms-publish-form");
+  if (!cmsForm) return;
 
-    cmsForm.onsubmit = async (e) => {
-        e.preventDefault();
+  cmsForm.onsubmit = async (e) => {
+    e.preventDefault();
 
-        const title = document.getElementById('cms-title').value;
-        const category = document.getElementById('cms-category').value;
-        const tagsString = document.getElementById('cms-tags').value;
-        const author = document.getElementById('cms-author').value;
-        const authorBio = document.getElementById('cms-author-bio').value;
-        const summary = document.getElementById('cms-summary').value;
-        const body = document.getElementById('cms-body').value;
+    const title = document.getElementById("cms-title").value;
+    const category = document.getElementById("cms-category").value;
+    const tagsString = document.getElementById("cms-tags").value;
+    const author = document.getElementById("cms-author").value;
+    const authorBio = document.getElementById("cms-author-bio").value;
+    const summary = document.getElementById("cms-summary").value;
+    const body = document.getElementById("cms-body").value;
 
-        const tagsArray = tagsString.split(',').map(tag => tag.trim());
-        const dateString = new Date().toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
-        const id = 'post_' + Date.now();
+    const tagsArray = tagsString.split(",").map((tag) => tag.trim());
+    const dateString = new Date().toLocaleDateString(undefined, {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
+    const id = "post_" + Date.now();
 
-        const newArticle = {
-            id,
-            title,
-            category,
-            tags: tagsArray,
-            author,
-            authorBio,
-            authorLink: "about.html",
-            date: dateString,
-            image: "assets/placeholder.svg",
-            summary: summary,
-            body: body
-        };
-
-        await CMS_API.publishArticle(newArticle);
-        alert('Article published successfully! Redirecting to Blog page...');
-        window.location.href = 'blog.html';
+    const newArticle = {
+      id,
+      title,
+      category,
+      tags: tagsArray,
+      author,
+      authorBio,
+      authorLink: "about.html",
+      date: dateString,
+      image: "assets/placeholder.svg",
+      summary: summary,
+      body: body,
     };
+
+    await CMS_API.publishArticle(newArticle);
+    alert("Article published successfully! Redirecting to Blog page...");
+    window.location.href = "blog.html";
+  };
 }
 
 function loadPressSubmissionPage() {
-    const pressForm = document.getElementById('press-submit-form');
-    if (pressForm) {
-        pressForm.onsubmit = (e) => {
-            e.preventDefault();
-            alert('Press Release pitched successfully! Our editorial desk will review it within 24 hours.');
-            pressForm.reset();
-        };
-    }
+  const pressForm = document.getElementById("press-submit-form");
+  if (pressForm) {
+    pressForm.onsubmit = (e) => {
+      e.preventDefault();
+      alert(
+        "Press Release pitched successfully! Our editorial desk will review it within 24 hours.",
+      );
+      pressForm.reset();
+    };
+  }
 }
